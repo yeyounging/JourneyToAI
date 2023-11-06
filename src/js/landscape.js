@@ -118,8 +118,23 @@ class App {
                 }
             });
 
+            // Animation
+            const animationClips = gltf.animations; // THREE.AnimationClip[]
+            const mixer = new THREE.AnimationMixer(model);
+            const animationsMap = {};
+            animationClips.forEach(clip => {
+                const name = clip.name;
+                console.log(name);
+                animationsMap[name] = mixer.clipAction(clip); // THREE.AnimationAction
+            });
+
+            this._mixer = mixer;
+            this._animationMap = animationsMap;
+            this._currentAnimationAction = this._animationMap["Idle"];
+            this._currentAnimationAction.play();
+
             const box = (new THREE.Box3).setFromObject(model);
-            model.position.y = (box.max.y - box.min.y) / 2;
+            model.position.y = -box.min.y;
 
             const axisHelper = new THREE.AxesHelper(1000);
             this._scene.add(axisHelper);
@@ -161,6 +176,12 @@ class App {
         }
 
         this._fps.update();
+
+        if (this._mixer) {
+            const deltaTime = time - this._prevTime;
+            this._mixer.update(deltaTime);
+        }
+        this._prevTime = time;
     }
 }
 

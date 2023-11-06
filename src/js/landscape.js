@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'OrbitControls'
 import { GLTFLoader } from 'GLTFLoader'
+import Stats from 'stats'
 
 class App {
     // 생성자
@@ -11,6 +12,10 @@ class App {
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         divContainer.appendChild(renderer.domElement);
+
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.VSMShadowMap;
+
         this._renderer = renderer;
 
         const scene = new THREE.Scene();
@@ -28,15 +33,23 @@ class App {
     }
 
     _setupControls() {
-        this._contols = new OrbitControls(this._camera, this._divContainer);
+        this._controls = new OrbitControls(this._camera, this._divContainer);
+
+        const stats = new Stats();
+        this._divContainer.appendChild(stats.dom);
+        this._fps = stats;
     }
 
     // =========== Camera ===========
     // Scene의 카메라 설정
     _setupCamera() {
-        const width = this._divContainer.clientWidth;
-        const height = this._divContainer.clientHeight;
-        const camera = new THREE.PerspectiveCamera(60, width / height, 1, 5000);
+        const camera = new THREE.PerspectiveCamera(
+            60,
+            window.innerWidth / window.innerHeight,
+            1,
+            5000
+        );
+
         camera.position.set(0, 100, 500);
         this._camera = camera;
     }
@@ -44,13 +57,13 @@ class App {
     // =========== Light ===========
     // Scene의 빛 설정
     _setupLight() {
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 7);
         this._scene.add(ambientLight);
 
-        this._addPointLight(500, 150, 500, 0xffffff);
-        this._addPointLight(-500, 150, 500, 0xffffff);
-        this._addPointLight(-500, 150, -500, 0xffffff);
-        this._addPointLight(500, 150, -500, 0xffffff);
+        this._addPointLight(500, 150, 500, 0xff0000);
+        this._addPointLight(-500, 150, 500, 0xffff00);
+        this._addPointLight(-500, 150, -500, 0x00ff00);
+        this._addPointLight(500, 150, -500, 0x0000ff);
 
         const shadowLight = new THREE.DirectionalLight(0xffffff, 0.2);
         shadowLight.position.set(200, 500, 200);
@@ -60,11 +73,22 @@ class App {
 
         this._scene.add(shadowLight);
         this._scene.add(shadowLight.target);
+
+        shadowLight.castShadow = true;
+        shadowLight.shadow.mapSize.width = 1024;
+        shadowLight.shadow.mapSize.height = 1024;
+        shadowLight.shadow.camera.top = shadowLight.shadow.camera.right = 700;
+        shadowLight.shadow.camera.bottom = shadowLight.shadow.camera.left = -700;
+        shadowLight.shadow.camera.near = 100;
+        shadowLight.shadow.camera.far = 900;
+        shadowLight.shadow.radius = 5;
+        const shadowCameraHelper = new THREE.CameraHelper(shadowLight.shadow.camera);
+        this._scene.add(shadowCameraHelper);
     }
 
     // Scene에 PointLight 추가
-    _addPointLight(x, y, z, color, helperColor = 0xffffff, intensity = 1.5, distance = 2000) {
-        const pointLight = new THREE.PointLight(color, 1.5, 2000);
+    _addPointLight(x, y, z, helperColor, color = 0xffffff, intensity = 1.5, distance = 2000) {
+        const pointLight = new THREE.PointLight(color, intensity, distance);
         pointLight.position.set(x, y, z);
 
         this._scene.add(pointLight);
@@ -82,10 +106,28 @@ class App {
         const plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.rotation.x = -Math.PI / 2;
         this._scene.add(plane);
+        plane.receiveShadow = true;
 
         new GLTFLoader().load("../../assets/models/character.glb", (gltf) => {
             const model = gltf.scene;
             this._scene.add(model);
+
+            model.traverse(child => {
+                if (child instanceof THREE.Mesh) {
+                    child.castShadow = true;
+                }
+            });
+
+            const box = (new THREE.Box3).setFromObject(model);
+            model.position.y = (box.max.y - box.min.y) / 2;
+
+            const axisHelper = new THREE.AxesHelper(1000);
+            this._scene.add(axisHelper);
+
+            const boxHelper = new THREE.BoxHelper(model);
+            this._scene.add(boxHelper);
+            this._boxHelper = boxHelper;
+            this._model = model;
         });
     }
 
@@ -95,9 +137,9 @@ class App {
     resize() {
         const width = this._divContainer.clientWidth;
         const height = this._divContainer.clientHeight;
-        this._renderer.setSize(width, height);
         this._camera.aspect = width / height;
         this._camera.updateProjectionMatrix();
+        this._renderer.setSize(width, height);
     }
 
     // 렌더
@@ -112,7 +154,13 @@ class App {
     update(time) {
         time *= 0.001; // ms -> s
 
-        this._contols.update();
+        this._controls.update();
+
+        if (this._boxHelper) {
+            this._boxHelper.update();
+        }
+
+        this._fps.update();
     }
 }
 

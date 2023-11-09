@@ -70,7 +70,7 @@ class App {
 
         }
 
-        const skyGeometry = new THREE.BoxGeometry(100000, 100000, 100000);
+        const skyGeometry = new THREE.BoxGeometry(50000, 50000, 50000);
 
         this._skybox = new THREE.Mesh(skyGeometry, skyTextureArray);
         this._scene.add(this._skybox);

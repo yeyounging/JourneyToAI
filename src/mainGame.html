@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./css/basic.css">
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "../common/three.module.js",
+                "OrbitControls" : "../common/OrbitControls.js",
+                "GLTFLoader" : "../common/GLTFLoader.js",
+                "stats" : "../common/stats.module.js",
+                "Octree" : "../common/Octree.js",
+                "Capsule" : "../common/Capsule.js"
+              }
+        }
+    </script>
+
+    <script type="module" src="./js/mainGame.js" defer></script>
+</head>
+
+<body>
+    <div id="webgl-container"></div>
+</body>
+
+</html>

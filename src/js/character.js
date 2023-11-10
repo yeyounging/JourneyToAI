@@ -49,7 +49,7 @@ class Character {
             this._model._capsule = new Capsule(
                 new THREE.Vector3(0, diameter / 2, 0),
                 new THREE.Vector3(0, height - diameter / 2, 0),
-                diameter
+                diameter / 2
             );
 
             const boxHelper = new THREE.BoxHelper(this._model);
@@ -73,7 +73,7 @@ class Character {
 
     setupScene(scene) {
         scene.add(this._model);
-        scene.add(this._boxHelper);
+        // scene.add(this._boxHelper);
 
         this._isAddedToScene = true;
 
@@ -166,8 +166,6 @@ class Character {
         camera.position.x = newPosition.x;
         camera.position.z = newPosition.z;
         camera.position.y = newPosition.y;
-        // camera.position.x -= this._previousPosition.x - this._model.position.x;
-        // camera.position.z -= this._previousPosition.z - this._model.position.z;
 
         return camera;
     }
@@ -257,7 +255,7 @@ class Character {
                 + this._model._capsule.radius * 2;
             this._model.position.set(
                 this._model._capsule.start.x,
-                this._model._capsule.start.y - this._model._capsule.radius + capsuleHeight / 2,
+                this._model._capsule.start.y - (this._model._capsule.radius) + capsuleHeight / 2 - 3,
                 this._model._capsule.start.z
             );
 

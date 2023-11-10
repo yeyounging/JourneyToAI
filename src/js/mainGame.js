@@ -1,11 +1,11 @@
-import * as THREE from 'three'
-import { OrbitControls } from 'OrbitControls'
-import { GLTFLoader } from 'GLTFLoader'
-import Stats from 'stats'
-import { Octree } from "Octree"
-import { Capsule } from "Capsule"
+import * as THREE from 'three'                  //Three.js
+import { OrbitControls } from 'OrbitControls'   //For camera control
+import { GLTFLoader } from 'GLTFLoader'         //For loading 3D model
+import Stats from 'stats'                       // For FPS
+import { Octree } from "Octree"                 //For collision detection (terrain)
+import { Capsule } from "Capsule"               //For collision detection (character)
 
-import { Character } from './character.js'
+import { Character } from './character.js'      //Character class
 class App {
     constructor() {
         const divContainer = document.querySelector("#webgl-container");
@@ -23,6 +23,7 @@ class App {
         const scene = new THREE.Scene();
         this._scene = scene;
 
+        // 오브젝트 세팅 부분
         this._setupCamera();
         this._setupLight();
         this._setupModel();
@@ -51,7 +52,8 @@ class App {
         this._fps = stats;
     }
 
-
+    // =========== Model ===========
+    // Load model from assets and add to scene
     _setupModel() {
         const loader = new GLTFLoader();
 
@@ -79,9 +81,11 @@ class App {
         // =========== Character ===========
         this._character = new Character(loader, "../../assets/models/gachon.glb");
 
+
         // =========== Map ===========
         this._mapLoaded = false;
-        loader.load("../../assets/models/map.glb", (gltf) => {
+        loader.load("../../assets/models/mapFinal.glb", (gltf) => {
+            console.log("map loaded");
             const model = gltf.scene;
             model.scale.set(50, 50, 50);
 
@@ -97,6 +101,8 @@ class App {
             this._setupOctree(model);
             this._mapLoaded = true;
         });
+        // ================
+
 
     }
 
@@ -114,25 +120,14 @@ class App {
     }
 
     // =========== Light ===========
-
-    _addPointLight(x, y, z, helperColor, color = 0xffffff, intensity = 1.5, distance = 2000) {
-        const pointLight = new THREE.PointLight(color, intensity, distance);
-        pointLight.position.set(x, y, z);
-
-        this._scene.add(pointLight);
-
-        // const pointLightHelper = new THREE.PointLightHelper(pointLight, 10, helperColor);
-        // this._scene.add(pointLightHelper);
-    }
-
     _setupLight() {
         const ambientLight = new THREE.AmbientLight(0xffffff, 2);
         this._scene.add(ambientLight);
 
-        this._addPointLight(500, 150, 500, 0xff0000);
-        this._addPointLight(-500, 150, 500, 0xffff00);
-        this._addPointLight(-500, 150, -500, 0x00ff00);
-        this._addPointLight(500, 150, -500, 0x0000ff);
+        this._addPointLight(500, 150, 500, 0xff0000, { intensity: 3 });
+        this._addPointLight(-500, 150, 500, 0xffff00, { intensity: 3 });
+        this._addPointLight(-500, 150, -500, 0x00ff00, { intensity: 3 });
+        this._addPointLight(500, 150, -500, 0x0000ff, { intensity: 3 });
 
         const shadowLight = new THREE.DirectionalLight(0xffffff, 0.2);
         shadowLight.position.set(200, 500, 200);
@@ -155,6 +150,17 @@ class App {
         // this._scene.add(shadowCameraHelper);
     }
 
+    _addPointLight(x, y, z, helperColor, { color = 0xffffff, intensity = 1.5, distance = 2000 }) {
+        const pointLight = new THREE.PointLight(color, intensity, distance);
+        pointLight.position.set(x, y, z);
+
+        this._scene.add(pointLight);
+
+        // const pointLightHelper = new THREE.PointLightHelper(pointLight, 10, helperColor);
+        // this._scene.add(pointLightHelper);
+    }
+
+    // =========== Realtime update ===========
     update(time) {
         time *= 0.001; // second unit
 

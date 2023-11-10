@@ -3,11 +3,15 @@ import { GLTFLoader } from 'GLTFLoader'
 import { Octree } from "Octree"
 import { Capsule } from "Capsule"
 
-
+// Character class
+// 
 class Character {
     constructor(loader, modelUrl) {
         loader.load(modelUrl, (gltf) => {
             this._model = gltf.scene;
+            // this.setPosition(1000, 0, 100);
+
+            console.log(this._model)
 
             this._model.traverse(child => {
                 if (child instanceof THREE.Mesh) {
@@ -27,11 +31,12 @@ class Character {
             // For animation
             this._mixer = mixer;
             this._animationMap = animationsMap;
-            // this._currentAnimationAction = this._animationMap["ArmatureAction"];
+            // this._currentAnimationAction = this._animationMap["stopped"];
             // this._currentAnimationAction.play();
 
             const box = (new THREE.Box3).setFromObject(this._model);
-            this._model.position.y = box.min.y + box.max.y;
+            this._model.position.y = (box.min.y - box.max.y) / 2;
+            console.log(box);
 
             const height = box.max.y - box.min.y;
             const diameter = (box.max.z - box.min.z);
@@ -43,9 +48,6 @@ class Character {
                 new THREE.Vector3(0, height - diameter / 2, 0),
                 diameter / 2
             );
-
-            const axisHelper = new THREE.AxesHelper(1000);
-            this._axisHelper = axisHelper;
 
             const boxHelper = new THREE.BoxHelper(this._model);
             this._boxHelper = boxHelper;
@@ -68,7 +70,6 @@ class Character {
 
     setupScene(scene) {
         scene.add(this._model);
-        scene.add(this._axisHelper);
         scene.add(this._boxHelper);
 
         this._isAddedToScene = true;
@@ -138,16 +139,16 @@ class Character {
 
         if (this._pressedKeys["w"] || this._pressedKeys["a"] || this._pressedKeys["s"] || this._pressedKeys["d"]) {
             if (this._pressedKeys["shift"]) {
-                // this._currentAnimationAction = this._animationMap["Run"];
+                // this._currentAnimationAction = this._animationMap["walk"];
                 this._maxSpeed = 350;
                 this._acceleration = 3;
             } else {
-                // this._currentAnimationAction = this._animationMap["Walk"];
+                // this._currentAnimationAction = this._animationMap["walk"];
                 this._maxSpeed = 80;
                 this._acceleration = 3;
             }
         } else {
-            // this._currentAnimationAction = this._animationMap["Idle"];
+            // this._currentAnimationAction = this._animationMap["stopped"];
             this._speed = 0;
             this._maxSpeed = 0;
             this._acceleration = 0;
@@ -187,12 +188,20 @@ class Character {
         }
     }
 
+    setPosition(x, y, z) {
+        this._model.position.set(x, y, z);
+        // this._model.position.setX(x);
+        // this._model.position.setY(y);
+        // this._model.position.setZ(z);
+    }
+
 
     // Update
     update(deltaTime, camera) {
         if (this._boxHelper) {
             this._boxHelper.update();
         }
+        // console.log(this._model.position)
 
         if (this._mixer) {
             this._mixer.update(deltaTime);

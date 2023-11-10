@@ -83,9 +83,34 @@ class App {
 
 
         // =========== Map ===========
+        // this._mapLoaded = false;
+        // loader.load("../../assets/models/map.glb", (gltf) => {
+        //     console.log("map loaded");
+        //     const model = gltf.scene;
+        //     model.scale.set(25, 25, 25);
+
+        //     this._scene.add(model);
+
+        //     model.traverse(child => {
+        //         if (child instanceof THREE.Mesh) {
+        //             child.castShadow = true;
+        //             child.receiveShadow = true;
+        //         }
+        //     });
+        // });
+        // loader.load("../../assets/models/CrashBox2.glb", (gltf) => {
+        //     console.log("crashbox loaded");
+        //     const model = gltf.scene;
+        //     model.scale.set(25, 25, 25);
+        //     this._crashBox = model;
+
+        //     this._setupOctree(this._crashBox);
+        //     this._mapLoaded = true;
+        // });
+
         this._mapLoaded = false;
-        loader.load("../../assets/models/map.glb", (gltf) => {
-            console.log("map loaded");
+        loader.load("../../assets/models/mapFinal.glb", (gltf) => {
+            console.log("crashbox loaded");
             const model = gltf.scene;
             model.scale.set(25, 25, 25);
 
@@ -97,13 +122,6 @@ class App {
                     child.receiveShadow = true;
                 }
             });
-        });
-
-        loader.load("../../assets/models/CrashBox2.glb", (gltf) => {
-            console.log("crashbox loaded");
-            const model = gltf.scene;
-            model.scale.set(25, 25, 25);
-            this._crashBox = model;
 
             this._setupOctree(model);
             this._mapLoaded = true;

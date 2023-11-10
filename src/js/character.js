@@ -158,11 +158,16 @@ class Character {
     // 이전 캐릭터 위치 - 카메라 위치 = 오차벡터
     // 현재 캐릭터 위치 + 오차 벡터 = 새로운 카메라 위치
     fixCameraToModel(camera) {
+        var offset = new THREE.Vector3();
+        offset.subVectors(camera.position, this._previousPosition);
+        var newPosition = new THREE.Vector3();
+        newPosition.addVectors(this._model.position, offset);
 
-
-        // var offset = this._previousPosition - camera.position;
-        camera.position.x -= this._previousPosition.x - this._model.position.x;
-        camera.position.z -= this._previousPosition.z - this._model.position.z;
+        camera.position.x = newPosition.x;
+        camera.position.z = newPosition.z;
+        camera.position.y = newPosition.y;
+        // camera.position.x -= this._previousPosition.x - this._model.position.x;
+        // camera.position.z -= this._previousPosition.z - this._model.position.z;
 
         return camera;
     }

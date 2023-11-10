@@ -87,7 +87,7 @@ class App {
         loader.load("../../assets/models/mapFinal.glb", (gltf) => {
             console.log("map loaded");
             const model = gltf.scene;
-            model.scale.set(50, 50, 50);
+            model.scale.set(25, 25, 25);
 
             this._scene.add(model);
 

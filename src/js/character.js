@@ -9,7 +9,8 @@ class Character {
     constructor(loader, modelUrl) {
         loader.load(modelUrl, (gltf) => {
             this._model = gltf.scene;
-            // this.setPosition(1000, 0, 100);
+            this._model.children[0].position.set(0, 0, 0);
+            this._model.children[0].lookAt(0, 0, -1);
 
             console.log(this._model)
 
@@ -19,6 +20,7 @@ class Character {
                 }
             });
 
+            // ==   For animation   ==
             const animationClips = gltf.animations; // THREE.AnimationClip[]
             const mixer = new THREE.AnimationMixer(this._model);
             const animationsMap = {};
@@ -31,8 +33,9 @@ class Character {
             // For animation
             this._mixer = mixer;
             this._animationMap = animationsMap;
-            // this._currentAnimationAction = this._animationMap["stopped"];
-            // this._currentAnimationAction.play();
+            this._currentAnimationAction = this._animationMap["stopped"];
+            this._currentAnimationAction.play();
+            // ====
 
             const box = (new THREE.Box3).setFromObject(this._model);
             this._model.position.y = (box.min.y - box.max.y) / 2;
@@ -46,7 +49,7 @@ class Character {
             this._model._capsule = new Capsule(
                 new THREE.Vector3(0, diameter / 2, 0),
                 new THREE.Vector3(0, height - diameter / 2, 0),
-                diameter / 2
+                diameter
             );
 
             const boxHelper = new THREE.BoxHelper(this._model);
@@ -76,15 +79,6 @@ class Character {
 
         return scene;
     }
-
-    // forDebugging() {
-    //     const axisHelper = new THREE.AxesHelper(1000);
-    //     this._axisHelper = axisHelper;
-
-    //     const boxHelper = new THREE.BoxHelper(this._model);
-    //     this._boxHelper = boxHelper;
-    // }
-
 
     // User key input correspondence
     _setupControls() {
@@ -139,16 +133,16 @@ class Character {
 
         if (this._pressedKeys["w"] || this._pressedKeys["a"] || this._pressedKeys["s"] || this._pressedKeys["d"]) {
             if (this._pressedKeys["shift"]) {
-                // this._currentAnimationAction = this._animationMap["walk"];
+                this._currentAnimationAction = this._animationMap["walk"];
                 this._maxSpeed = 350;
                 this._acceleration = 3;
             } else {
-                // this._currentAnimationAction = this._animationMap["walk"];
+                this._currentAnimationAction = this._animationMap["walk"];
                 this._maxSpeed = 80;
                 this._acceleration = 3;
             }
         } else {
-            // this._currentAnimationAction = this._animationMap["stopped"];
+            this._currentAnimationAction = this._animationMap["stopped"];
             this._speed = 0;
             this._maxSpeed = 0;
             this._acceleration = 0;
@@ -209,7 +203,7 @@ class Character {
             const angleCameraDirectionAxisY = Math.atan2(
                 (camera.position.x - this._model.position.x),
                 (camera.position.z - this._model.position.z)
-            ) + Math.PI;
+            );
 
             const rotateQuarternion = new THREE.Quaternion();
             rotateQuarternion.setFromAxisAngle(

@@ -236,10 +236,13 @@ class Character {
         if (this._boxHelper) {
             this._boxHelper.update();
         }
-        // console.log(this._model.position)
+        // 
         // =========== 여기에 특정 시간마다 hp를 깎는 코드를 넣으면 됩니다.
 
-
+        const pressedKeys = this._pressedKeys;
+        if (pressedKeys['m']) {
+            console.log(this._model.position)
+        }
         //=====================================
 
 

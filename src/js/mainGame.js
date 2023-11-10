@@ -88,11 +88,11 @@ class App {
 
         // =========== Character ===========
         // 생성자의 중괄호 안에 x, y, z좌표를 입력하여 캐릭터의 시작 위치를 변경할 수 있다.
-        this._character = new Character(loader, "../../assets/models/gachon.glb", { y: 5 });
+        this._character = new Character(loader, "../../assets/models/gachon.glb", { x: 405, y: 0, z: 1002 });
 
-        var goal1 = new GoalPoint(loader, "../../assets/models/goal.glb", { x: 10, y: 0, z: -30 }, () => {
-            this._goalList.push(goal1);
-        });
+        // var goal1 = new GoalPoint(loader, "../../assets/models/goal.glb", { x: 10, y: 0, z: -30 }, () => {
+        //     this._goalList.push(goal1);
+        // });
 
         // var coffee1 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 10, y: 0, z: -30 }, () => {
         //     this._coffeeList.push(coffee1);
@@ -104,33 +104,8 @@ class App {
 
 
         // =========== Map ===========
-        // this._mapLoaded = false;ㄴ
-        // loader.load("../../assets/models/map.glb", (gltf) => {
-        //     console.log("map loaded");
-        //     const model = gltf.scene;
-        //     model.scale.set(10, 10, 10);
-
-        //     this._scene.add(model);
-
-        //     model.traverse(child => {
-        //         if (child instanceof THREE.Mesh) {
-        //             child.castShadow = true;
-        //             child.receiveShadow = true;
-        //         }
-        //     });
-        // });
-        // loader.load("../../assets/models/CrashBox2.glb", (gltf) => {
-        //     console.log("crashbox loaded");
-        //     const model = gltf.scene;
-        //     model.scale.set(10, 10, 10);
-        //     this._crashBox = model;
-
-        //     this._setupOctree(this._crashBox);
-        //     this._mapLoaded = true;
-        // });
-
         this._mapLoaded = false;
-        loader.load("../../assets/models/mapFinal.glb", (gltf) => {
+        loader.load("../../assets/models/map.glb", (gltf) => {
             console.log("map loaded");
             const model = gltf.scene;
             model.scale.set(10, 10, 10);
@@ -145,8 +120,39 @@ class App {
                 }
             });
 
+
+        });
+        // loader.load("../../assets/models/CrashBox.glb", (gltf) => {
+        //     console.log("crashbox loaded");
+        //     const model = gltf.scene;
+        //     model.scale.set(10, 10, 10);
+        //     model.position.set(0, 0, 0);
+        //     this._crashBox = model;
+
+        //     this._setupOctree(this._crashBox);
+        //     this._mapLoaded = true;
+        //     console.log("octree complete");
+        // });
+
+        this._mapLoaded = false;
+        loader.load("../../assets/models/CrashBox.glb", (gltf) => {
+            console.log("map loaded");
+            const model = gltf.scene;
+            model.scale.set(10, 10, 10);
+            model.position.set(0, 0, 0);
+
+            // this._scene.add(model);
+
+            // model.traverse(child => {
+            //     if (child instanceof THREE.Mesh) {
+            //         child.castShadow = true;
+            //         child.receiveShadow = true;
+            //     }
+            // });
+
             this._setupOctree(model);
             this._mapLoaded = true;
+            console.log("octree complete");
         });
         // ================
 
@@ -168,7 +174,7 @@ class App {
 
     // =========== Light ===========
     _setupLight() {
-        const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 4);
         this._scene.add(ambientLight);
 
         this._addPointLight(500, 150, 500, 0xff0000, { intensity: 3 });

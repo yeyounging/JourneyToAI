@@ -12,6 +12,9 @@ class Character {
             this._model.children[0].position.set(0, 0, 0);
             this._model.children[0].lookAt(0, 0, -1);
 
+            var hp = 100;
+            this.hp = hp;
+
             console.log(this._model)
 
             this._model.traverse(child => {
@@ -192,12 +195,39 @@ class Character {
         }
     }
 
+    collisionWithCoffee(coffeeList) {
+        for (let i = 0; i < coffeeList.length; i++) {
+            if (this._model._capsule.intersectsBox(coffeeList[i]._collisionBox)) {
+                console.log("Collision with coffee");
+            }
+        }
+    }
+
+    collisionWithGoal(goalList) {
+        for (let i = 0; i < goalList.length; i++) {
+            if (this._model._capsule.intersectsBox(goalList[i]._collisionBox)) {
+                console.log("Collision with goal!");
+            }
+        }
+    }
+
     setPosition(x, y, z) {
         this._model._capsule = new Capsule(
             new THREE.Vector3(x, y + this._diameter / 2, z),
             new THREE.Vector3(x, y + this._height - this._diameter / 2, z),
             this._diameter / 2
         );
+    }
+
+    toJson() {
+        var jsonObject = {
+            "x": this._model.position.x,
+            "y": this._model.position.y,
+            "z": this._model.position.z,
+            "hp": this.hp
+        };
+
+        return jsonObject;
     }
 
 
@@ -207,6 +237,12 @@ class Character {
             this._boxHelper.update();
         }
         // console.log(this._model.position)
+        // =========== 여기에 특정 시간마다 hp를 깎는 코드를 넣으면 됩니다.
+
+
+        //=====================================
+
+
 
         if (this._mixer) {
             this._mixer.update(deltaTime);
@@ -244,9 +280,9 @@ class Character {
             }
 
             const velocity = new THREE.Vector3(
-                this._walkDirection.x * this._speed,
+                this._walkDirection.x * this._speed * (this.hp / 100),
                 this._walkDirection.y * this._fallingSpeed,
-                this._walkDirection.z * this._speed
+                this._walkDirection.z * this._speed * (this.hp / 100)
             );
 
             const deltaPosition = velocity.clone().multiplyScalar(deltaTime);
@@ -261,7 +297,6 @@ class Character {
                 this._model._capsule.start.y - (this._model._capsule.radius) + capsuleHeight / 2 - 3,
                 this._model._capsule.start.z
             );
-
         }
 
     }

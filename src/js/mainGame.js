@@ -88,7 +88,7 @@ class App {
 
         // =========== Character ===========
         // 생성자의 중괄호 안에 x, y, z좌표를 입력하여 캐릭터의 시작 위치를 변경할 수 있다.
-        this._character = new Character(loader, "../../assets/models/gachon.glb", { x: 405, y: 0, z: 1002 });
+        this._character = new Character(loader, "../../assets/models/character.glb", { x: 405, y: 0, z: 1002 });
 
         // var goal1 = new GoalPoint(loader, "../../assets/models/goal.glb", { x: 10, y: 0, z: -30 }, () => {
         //     this._goalList.push(goal1);

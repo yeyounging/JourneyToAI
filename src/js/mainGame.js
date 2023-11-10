@@ -6,6 +6,8 @@ import { Octree } from "Octree"                 //For collision detection (terra
 import { Capsule } from "Capsule"               //For collision detection (character)
 
 import { Character } from './character.js'      //Character class
+import { Coffee } from './coffee.js'            //Coffee class
+import { GoalPoint } from './goalPoint.js'
 class App {
     constructor() {
         const divContainer = document.querySelector("#webgl-container");
@@ -22,6 +24,12 @@ class App {
 
         const scene = new THREE.Scene();
         this._scene = scene;
+
+        var coffeeList = [];
+        this._coffeeList = coffeeList;
+
+        var goalList = [];
+        this._goalList = goalList;
 
         // 오브젝트 세팅 부분
         this._setupCamera();
@@ -80,7 +88,19 @@ class App {
 
         // =========== Character ===========
         // 생성자의 중괄호 안에 x, y, z좌표를 입력하여 캐릭터의 시작 위치를 변경할 수 있다.
-        this._character = new Character(loader, "../../assets/models/gachon.glb", { x: 0 });
+        this._character = new Character(loader, "../../assets/models/gachon.glb", { y: 5 });
+
+        var goal1 = new GoalPoint(loader, "../../assets/models/goal.glb", { x: 10, y: 0, z: -30 }, () => {
+            this._goalList.push(goal1);
+        });
+
+        // var coffee1 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 10, y: 0, z: -30 }, () => {
+        //     this._coffeeList.push(coffee1);
+        // });
+
+        // var coffee2 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 10, y: 50, z: -130 }, () => {
+        //     this._coffeeList.push(coffee2);
+        // });
 
 
         // =========== Map ===========
@@ -111,7 +131,7 @@ class App {
 
         this._mapLoaded = false;
         loader.load("../../assets/models/mapFinal.glb", (gltf) => {
-            console.log("crashbox loaded");
+            console.log("map loaded");
             const model = gltf.scene;
             model.scale.set(10, 10, 10);
             model.position.set(0, 0, 0);
@@ -187,6 +207,35 @@ class App {
         // this._scene.add(pointLightHelper);
     }
 
+    // ========= For save game ========
+    // 저장은 각 오브젝트의 toJson()을 호출하여 json으로 변환한 후
+    // 알아서 저장해 ㅋㅋ
+    // ================================
+
+    // ========= For load game =========
+
+    // jsonObject를 받아서 커피 오브젝트를 생성하고 coffeeList에 추가한다.
+    // 반환된 coffee 오브젝트는 혹시 몰라서 리턴한거임 안써도 됨
+    coffeeFromJson(jsonObject) {
+        var loader = new GLTFLoader();
+        var coffee = new Coffee(loader, "../../assets/models/coffee.glb", jsonObject.minigame, { x: jsonObject.x, y: jsonObject.y, z: jsonObject.z }, () => {
+            this._coffeeList.push(coffee);
+        });
+
+        return coffee;
+    }
+
+    // jsonObject를 받아서 캐릭터 오브젝트를 생성하고 리턴한다.
+    characterFromJson(jsonObject) {
+        var loader = new GLTFLoader();
+        var character = new Character(loader, "../../assets/models/gachon.glb", { x: jsonObject.x, y: jsonObject.y, z: jsonObject.z });
+        character.hp = jsonObject.hp;
+
+        return character;
+    }
+
+    // =================================
+
     // =========== Realtime update ===========
     update(time) {
         time *= 0.001; // second unit
@@ -197,20 +246,40 @@ class App {
 
         const deltaTime = time - this._previousTime;
 
+        this._previousTime = time;
+
+        // Ready to all components are loaded
+        if (this._mapLoaded == false) {
+            return;
+        }
+
         if (this._character._isAddedToScene == false) {
             this._scene = this._character.setupScene(this._scene);
         }
 
-        if (this._character._isAddedToScene == true) {
-            this._character.update(deltaTime, this._camera);
-            if (this._mapLoaded)
-                this._character.collisionWithOctree(this._worldOctree);
-            this._camera = this._character.fixCameraToModel(this._camera);
-            this._controls = this._character.fixControlToModel(this._controls);
+        for (var i = 0; i < this._coffeeList.length; i++) {
+            if (this._coffeeList[i]._isAddedToScene == false) {
+                this._scene = this._coffeeList[i].setupScene(this._scene);
+            }
+        }
+
+        for (var i = 0; i < this._goalList.length; i++) {
+            if (this._goalList[i]._isAddedToScene == false) {
+                this._scene = this._goalList[i].setupScene(this._scene);
+            }
         }
 
 
-        this._previousTime = time;
+        if (this._character._isAddedToScene == true) {
+            if (this._worldOctree) {
+                this._character.collisionWithOctree(this._worldOctree);
+                this._character.collisionWithCoffee(this._coffeeList);
+                this._character.collisionWithGoal(this._goalList);
+                this._character.update(deltaTime, this._camera);
+                this._camera = this._character.fixCameraToModel(this._camera);
+                this._controls = this._character.fixControlToModel(this._controls);
+            }
+        }
     }
 
     render(time) {

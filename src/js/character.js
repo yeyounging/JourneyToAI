@@ -155,7 +155,12 @@ class Character {
     }
 
     //==== For world components interactive =====
+    // 이전 캐릭터 위치 - 카메라 위치 = 오차벡터
+    // 현재 캐릭터 위치 + 오차 벡터 = 새로운 카메라 위치
     fixCameraToModel(camera) {
+
+
+        // var offset = this._previousPosition - camera.position;
         camera.position.x -= this._previousPosition.x - this._model.position.x;
         camera.position.z -= this._previousPosition.z - this._model.position.z;
 

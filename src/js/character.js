@@ -6,7 +6,7 @@ import { Capsule } from "Capsule"
 // Character class
 // 
 class Character {
-    constructor(loader, modelUrl) {
+    constructor(loader, modelUrl, { x = 0, y = 0, z = 0 }) {
         loader.load(modelUrl, (gltf) => {
             this._model = gltf.scene;
             this._model.children[0].position.set(0, 0, 0);
@@ -42,13 +42,15 @@ class Character {
             console.log(box);
 
             const height = box.max.y - box.min.y;
+            this._boxHeight = height;
             const diameter = (box.max.z - box.min.z);
+            this._diameter = diameter;
             console.log(diameter)
 
             // For Collision
             this._model._capsule = new Capsule(
-                new THREE.Vector3(0, diameter / 2, 0),
-                new THREE.Vector3(0, height - diameter / 2, 0),
+                new THREE.Vector3(x, y + diameter / 2, z),
+                new THREE.Vector3(x, y + height - diameter / 2, z),
                 diameter / 2
             );
 
@@ -134,7 +136,7 @@ class Character {
         if (this._pressedKeys["w"] || this._pressedKeys["a"] || this._pressedKeys["s"] || this._pressedKeys["d"]) {
             if (this._pressedKeys["shift"]) {
                 this._currentAnimationAction = this._animationMap["walk"];
-                this._maxSpeed = 350;
+                this._maxSpeed = 150;
                 this._acceleration = 3;
             } else {
                 this._currentAnimationAction = this._animationMap["walk"];
@@ -191,10 +193,11 @@ class Character {
     }
 
     setPosition(x, y, z) {
-        this._model.position.set(x, y, z);
-        // this._model.position.setX(x);
-        // this._model.position.setY(y);
-        // this._model.position.setZ(z);
+        this._model._capsule = new Capsule(
+            new THREE.Vector3(x, y + this._diameter / 2, z),
+            new THREE.Vector3(x, y + this._height - this._diameter / 2, z),
+            this._diameter / 2
+        );
     }
 
 

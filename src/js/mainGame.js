@@ -79,15 +79,16 @@ class App {
         // =====================
 
         // =========== Character ===========
-        this._character = new Character(loader, "../../assets/models/gachon.glb");
+        // 생성자의 중괄호 안에 x, y, z좌표를 입력하여 캐릭터의 시작 위치를 변경할 수 있다.
+        this._character = new Character(loader, "../../assets/models/gachon.glb", { x: 0 });
 
 
         // =========== Map ===========
-        // this._mapLoaded = false;
+        // this._mapLoaded = false;ㄴ
         // loader.load("../../assets/models/map.glb", (gltf) => {
         //     console.log("map loaded");
         //     const model = gltf.scene;
-        //     model.scale.set(25, 25, 25);
+        //     model.scale.set(10, 10, 10);
 
         //     this._scene.add(model);
 
@@ -101,7 +102,7 @@ class App {
         // loader.load("../../assets/models/CrashBox2.glb", (gltf) => {
         //     console.log("crashbox loaded");
         //     const model = gltf.scene;
-        //     model.scale.set(25, 25, 25);
+        //     model.scale.set(10, 10, 10);
         //     this._crashBox = model;
 
         //     this._setupOctree(this._crashBox);
@@ -112,7 +113,8 @@ class App {
         loader.load("../../assets/models/mapFinal.glb", (gltf) => {
             console.log("crashbox loaded");
             const model = gltf.scene;
-            model.scale.set(25, 25, 25);
+            model.scale.set(10, 10, 10);
+            model.position.set(0, 0, 0);
 
             this._scene.add(model);
 
@@ -140,7 +142,7 @@ class App {
             100000
         );
 
-        camera.position.set(0, 100, 500);
+        camera.position.set(0, 50, 100);
         this._camera = camera;
     }
 

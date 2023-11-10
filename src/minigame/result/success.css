@@ -1,0 +1,58 @@
+body {
+    font-family: 'Varela Round', sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+.result-container {
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    max-width: 400px;
+    height: 400px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+}
+
+.success {
+    color: #4caf50;
+}
+
+.failure {
+    color: #f44336;
+}
+
+#result-image {
+    max-width: 50%;
+    height: auto;
+    margin-bottom: 20px;
+    animation: rotateAnimation 2s infinite;
+}
+
+#result-message{
+    margin-bottom: 20px;
+}
+
+@keyframes rotateAnimation {
+    0% {
+        transform: rotate(-10deg);
+    }
+    25% {
+        transform: rotate(10deg);
+    }
+    50% {
+        transform: rotate(-10deg);
+    }
+    75% {
+        transform: rotate(10deg);
+    }
+    100% {
+        transform: rotate(-10deg);
+    }
+}

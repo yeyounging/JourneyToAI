@@ -34,19 +34,6 @@ window.onload = function init() {
   planet.position.y = -300;
   planet.position.z = -150;
 
-  var geom = new THREE.IcosahedronGeometry(15, 2);
-  var mat = new THREE.MeshPhongMaterial({
-    color: 0xBD9779,
-    shading: THREE.FlatShading
-  });
-
-  // // planet
-  // var mat = createMaterial();
-
-  // var mesh = new THREE.Mesh(geom, mat);
-  // mesh.scale.x = mesh.scale.y = mesh.scale.z = 18;
-  // planet.add(mesh);
-
   var ambientLight = new THREE.AmbientLight(0xf1eae4);
   scene.add(ambientLight);
 
@@ -55,24 +42,6 @@ window.onload = function init() {
   scene.add(directionalLight);
 
   clock = new THREE.Clock();
-
-  // // princess (character)
-  // const loader = new THREE.GLTFLoader();
-  // loader.load('../models/littlePrincess_2.glb', function(glb){
-  //   princess = glb.scene.children[0];
-  //   princess.scale.set(20, 20 , 20);
-  //   princess.position.x = 50;
-  //   princess.position.y = -30;
-  //   princess.position.z = -90;
-
-  //   mixer = new THREE.AnimationMixer(glb.scene);
-  //   var action = mixer.clipAction(glb.animations[0]);
-  //   action.play();
-
-  //   scene.add(glb.scene)
-  // }, undefined, function (error) {
-  //    console.error(error);
-  // });
 
   window.addEventListener('resize', onWindowResize, false);
 
@@ -159,9 +128,9 @@ window.onload = function init() {
     var r = Math.random();
     var g = Math.random();
     var b = Math.random();
-    r1 = r - 0.05;
-    g1 = g - 0.05;
-    b1 = b - 0.05;
+    r1 = r - 0.08;
+    g1 = g - 0.08;
+    b1 = b - 0.08;
     rand_color = new THREE.Color(r, g, b);
     rand_color_1 = new THREE.Color(r1, g1, b1);
 
@@ -174,67 +143,6 @@ window.onload = function init() {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   }
-
-  // function animate() {
-  //   requestAnimationFrame(animate);
-
-  //   planet.rotation.z += .001;
-  //   planet.rotation.y = 0;
-  //   planet.rotation.x = 0;
-  //   renderer.clear();
-
-  //   var delta = clock.getDelta();
-  //   if (mixer) mixer.update(delta);
-
-  //   animateStars();
-  //   renderer.render(scene, camera);
-  // };
-
-  // function addSphere() {
-
-  //   // The loop will move from z position of -1000 to z position 1000, adding a random particle at each position. 
-  //   for (var x = -400; x < 400; x += 10) {
-
-  //     // Make a sphere (exactly the same as before). 
-  //     var geometry = new THREE.SphereGeometry(0.5, 32, 32)
-  //     var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-  //     var sphere = new THREE.Mesh(geometry, material)
-
-  //     // This time we give the sphere random x and y positions between -500 and 500
-  //     sphere.position.z = Math.random() * 1000 - 500;
-  //     sphere.position.y = Math.random() * 1000 - 500;
-
-  //     // Then set the z position to where it is in the loop (distance of camera)
-  //     sphere.position.x = x;
-
-  //     // scale it up a bit
-  //     sphere.scale.x = sphere.scale.y = 4;
-
-  //     //add the sphere to the scene
-  //     scene.add(sphere);
-
-  //     //finally push it to the stars array 
-  //     stars.push(sphere);
-  //   }
-  // }
-
-  // function animateStars() {
-
-  //   // loop through each star
-  //   for (var i = 0; i < stars.length; i++) {
-
-  //     star = stars[i];
-
-  //     // and move it forward dependent on the mouseY position. 
-  //     star.position.x -= i / 10;
-
-  //     // if the particle is too close move it to the back
-  //     if (star.position.x < -400) star.position.x += 800;
-
-  //   }
-
-  // }
-
 
   let onMouseClick = function (e) {
     let gap1 = e.clientX - e.offsetX
@@ -286,14 +194,11 @@ window.onload = function init() {
     console.log(user_answer);
 
     if (user_answer == answer_cube) {
-      window.alert("Correct!");
-      console.log('Bingo');
+      window.location.href = "../result/success.html";
       //정답 시 점수 계산 로직
     }
     else {
-      window.alert("Wrong!");
-      // window.location.href = '../no.html';
-      console.log('NOOOOOOOOOOOOO');
+      window.location.href = "../result/failure.html";
       //오답시 점수 계산로직
     }
     console.log('score', score);

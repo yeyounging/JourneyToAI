@@ -11,7 +11,7 @@ let lapTimes;
 function startTimer() {
     if (!running) {
         running = true;
-        timer = setInterval(updateTimer, 10); 
+        timer = setInterval(updateTimer, 10);
     }
 }
 
@@ -21,7 +21,7 @@ function updateTimer() {
     if (mili === 100) {
         mili = 0;
         seconds++;
-        if(seconds === 60){
+        if (seconds === 60) {
             seconds = 0;
             minutes++;
         }
@@ -54,7 +54,7 @@ function formatTime(totalmili) {
     return min + ' : ' + sec + ' : ' + totalmili;
 }
 
-function getLocalStorage(){
+function getLocalStorage() {
     //로컬 스토리지에서 랩타임 배열 가져오고 없으면 새로 만들기
     var lapTimesString = localStorage.getItem('lapTimes');
     if (!lapTimesString) {
@@ -65,24 +65,19 @@ function getLocalStorage(){
     lapTimes = lapTimesString ? JSON.parse(lapTimesString) : [];
 }
 
-function laptimeFormatting(){
-    var formattedLapTimes = lapTimes.map(function(lapTime) {
+function laptimeFormatting() {
+    var formattedLapTimes = lapTimes.map(function (lapTime) {
         return {
             time: formatTime(lapTime.time),
             name: lapTime.name
         };
     });
-    resultString = formattedLapTimes.map(function(lapTime) {
+    resultString = formattedLapTimes.map(function (lapTime) {
         return `Name: ${lapTime.name}, Lap Time: ${lapTime.time}`;
     }).join('\n');
 
     //정렬된 랩타임 다시 저장
     localStorage.setItem('lapTimes', JSON.stringify(lapTimes));
-}
-
-function showRestartButton(){
-    var reStartButton = document.getElementById('reStartButton');
-    reStartButton.style.display = 'block';
 }
 
 function displayRank() {
@@ -92,7 +87,7 @@ function displayRank() {
     displayElement.textContent = resultString || 'No Records';
 }
 
-function gameStart(){
+export function gameStart() {
     mili = 0;
     seconds = 0;
     minutes = 0;
@@ -101,11 +96,10 @@ function gameStart(){
     var reStartB = document.getElementById('reStartButton');
     startB.addEventListener('click', startTimer());
     startB.style.display = 'none';
-    reStartB.style.display = 'none'
     displayRank();
 }
 
-function endGame(){
+export function endGame() {
     var userName = prompt('Input user name:');
     var newLapTime = totalmili;
 
@@ -117,7 +111,7 @@ function endGame(){
         lapTimes.push({ time: newLapTime, name: userName });
 
         //램타임 정렬
-        lapTimes.sort(function(a, b) {return a.time - b.time;});
+        lapTimes.sort(function (a, b) { return a.time - b.time; });
 
         //랩타임 5개만 남기기
         lapTimes = lapTimes.slice(0, 5);
@@ -125,7 +119,6 @@ function endGame(){
         laptimeFormatting();
         alert(resultString);
         displayRank();
-        showRestartButton();
         stopTimer();
-      }
+    }
 }

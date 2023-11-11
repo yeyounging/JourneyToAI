@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./css/basic.css">
     <link href="https://fonts.googleapis.com/css2?family=Crete+Round:ital@0;1&family=Varela+Round&display=swap"
-    rel="stylesheet">
+        rel="stylesheet">
     <script type="importmap">
         {
             "imports": {
@@ -20,25 +20,25 @@
     </script>
 
     <script type="module" src="./js/mainGame.js" defer></script>
-    <script src="./js/main_UI.js"></script>
 </head>
 
 <body>
     <div id="webgl-container"></div>
     <div class="game-start-page">
         <div class="timer">
-            <header><p id="timerDisplay">00:00:00</p></header>
+            <header>
+                <p id="timerDisplay">00:00:00</p>
+            </header>
         </div>
         <br>
         <div>
-            <button id="startButton" onclick="gameStart()">게임 시작</button>
-            <button id="reStartButton" onclick="gameStart()">게임 재시작</button>
+            <button id="startButton">게임 시작</button>
         </div>
         <div id="localStorageContent" class="Rank"></div>
-       <button onclick="endGame()">Game End Event</button>
     </div>
 </body>
-<!-- <audio autoplay loop volume="0.5">
+<audio autoplay loop volume="0.5">
     <source src="../assets/bgm/mainBGM.mp3" type="audio/mp3">
-</audio> -->
+</audio>
+
 </html>

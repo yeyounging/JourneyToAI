@@ -12,7 +12,7 @@ class Character {
             this._model.children[0].position.set(0, 0, 0);
             this._model.children[0].lookAt(0, 0, -1);
 
-            var hp = 100;
+            var hp = 200;
             this.hp = hp;
 
             console.log(this._model)
@@ -209,11 +209,15 @@ class Character {
     }
 
     collisionWithGoal(goalList) {
+        var isCollision = -1;
         for (let i = 0; i < goalList.length; i++) {
             if (this._model._capsule.intersectsBox(goalList[i]._collisionBox)) {
                 console.log("Collision with goal!");
+                isCollision = i;
             }
         }
+
+        return isCollision;
     }
 
     setPosition(x, y, z) {

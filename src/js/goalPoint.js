@@ -10,7 +10,7 @@ class GoalPoint {
             this._model.children[0].position.set(0, 0, 0);
             this._model.position.set(x, y, z);
 
-            this._model.scale.set(5, 5, 5);
+            this._model.scale.set(10, 10, 10);
 
             this._model.traverse(child => {
                 if (child instanceof THREE.Mesh) {

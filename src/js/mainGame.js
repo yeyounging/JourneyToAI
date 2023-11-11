@@ -8,6 +8,8 @@ import { Capsule } from "Capsule"               //For collision detection (chara
 import { Character } from './character.js'      //Character class
 import { Coffee } from './coffee.js'            //Coffee class
 import { GoalPoint } from './goalPoint.js'
+import { endGame } from './main_UI.js'
+import { gameStart } from './main_UI.js'
 
 class App {
     constructor() {
@@ -37,6 +39,11 @@ class App {
         this._setupLight();
         this._setupModel();
         this._setupControls();
+
+        // ======= HTML Init ========
+        var startButton = document.getElementById('startButton');
+        startButton.onclick = gameStart;
+
 
         window.onresize = this.resize.bind(this);
         this.resize();
@@ -260,6 +267,19 @@ class App {
     }
     // jsonObject를 받아서 커피 오브젝트를 생성하고 coffeeList에 추가한다.
     // 반환된 coffee 오브젝트는 혹시 몰라서 리턴한거임 안써도 됨
+    coffeeToJson() {
+        var jsonList = [];
+        for (var i = 0; i < this._coffeeList.length; i++) {
+            jsonList.push(this._coffeeList[i].toJson());
+        }
+
+        var jsonObject = {
+            'list': jsonList
+        }
+
+        return jsonObject
+    }
+
     coffeeFromJson(jsonObject) {
         var loader = new GLTFLoader();
         var coffee = new Coffee(loader, "../../assets/models/coffee.glb", jsonObject.minigame, { x: jsonObject.x, y: jsonObject.y, z: jsonObject.z }, () => {
@@ -331,7 +351,19 @@ class App {
                 window.location.href = minigameURL;
 
             }
-            this._character.collisionWithGoal(this._goalList);
+            var isCollisionWithGoal = this._character.collisionWithGoal(this._goalList);
+            if (isCollisionWithGoal != -1) {
+                this._goalList.splice(isCollisionWithGoal, 1);
+                localStorage.removeItem('characterInfo');
+                localStorage.removeItem('coffeeInfo');
+
+                endGame();
+                window.location.reload();
+            }
+
+
+
+
             this._character.update(deltaTime, this._camera);
             this._camera = this._character.fixCameraToModel(this._camera);
             this._controls = this._character.fixControlToModel(this._controls);

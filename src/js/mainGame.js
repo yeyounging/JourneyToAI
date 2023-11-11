@@ -354,6 +354,17 @@ class App {
                 //로컬 스토리지에 미니게임 진입 전 캐릭터, 커피 정보 저장
                 localStorage.setItem('characterInfo', JSON.stringify(this._character.toJson()));
                 localStorage.setItem('coffeeInfo', JSON.stringify(this.coffeeToJson()));
+
+                /**
+                 * to 민성
+                 * 여기가 커피에 충돌 했을 때 처리하는 부분임.
+                 * 위에 보면 충돌 당시 캐릭터랑 커피 정보 로컬 스토리지에 저장하는 거고
+                 * 저거처럼 충돌 당시 타이머를 로컬스토리지에 저장해주면 됨
+                 * 그리고 그거를 너가 게임 시작할 때 타이머 시작해주는거처럼 미니게임 끝나고 가져와서 그 시간부터 시작하게 해주면 됨
+                 *          -> 이 부분은 위에 app 생성자에서 해주면 될 듯함
+                 * 게임시작할 때 너가 어떤 방식으로 어디에서  타이머를 시작해주는 지 모르겠어서 못함.
+                 */
+
                 window.location.href = minigameURL;
 
             }

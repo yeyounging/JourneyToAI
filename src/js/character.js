@@ -12,7 +12,7 @@ class Character {
             this._model.children[0].position.set(0, 0, 0);
             this._model.children[0].lookAt(0, 0, -1);
 
-            var hp = 200;
+            var hp = 100;
             this.hp = hp;
 
             console.log(this._model)

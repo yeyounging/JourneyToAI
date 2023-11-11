@@ -18,12 +18,17 @@
         <h1>GAME RESULT</h1>
         <img id="result-image" src="../../../assets/img/coffeeIcon.png" alt="Earn coffee">
         <div id="result-message" class="success">Victory coffee achieved!</div>
-        <button type="button" class="btn btn-outline-primary" onclick="restartGame()">back to the main</button>
+        <button type="button" class="btn btn-outline-primary" onclick="backToMain()">back to the main</button>
     </div>
 
     <script>
         function backToMain() {
             //메인으로 돌아가기
+            let storedData = localStorage.getItem('characterInfo');
+            let dataObject = JSON.parse(storedData);
+            dataObject.hp += 15;
+            localStorage.setItem('characterInfo',JSON.stringify(dataObject));
+            window.location.href="/src/mainGame.html";
         }
     </script>
 </body>

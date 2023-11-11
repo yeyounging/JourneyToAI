@@ -18,11 +18,16 @@
         <h1>GAME RESULT</h1>
         <img id="result-image" src="../../../assets/img/coffeeIcon2.png" alt="Earn coffee">
         <div id="result-message" class="failure">Oh no, the coffee's taken a spill!</div>
-        <button type="button" class="btn btn-outline-danger" onclick="restartGame()">back to the main</button>
+        <button type="button" class="btn btn-outline-danger" onclick="backToMain()">back to the main</button>
     </div>
 
     <script>
         function backToMain() {
+            // let storedData = localStorage.getItem('characterInfo');
+            // let dataObject = JSON.parse(storedData);
+            // dataObject.hp -= 15;
+            // localStorage.setItem('characterInfo',JSON.stringify(dataObject));
+            window.location.href="/src/mainGame.html";
         }
     </script>
 </body>

@@ -89,7 +89,13 @@ class App {
 
         // =========== Character ===========
         // 생성자의 중괄호 안에 x, y, z좌표를 입력하여 캐릭터의 시작 위치를 변경할 수 있다.
-        this._character = new Character(loader, "../../assets/models/character.glb", { x: 590, y: 50, z: 992 });
+        if (localStorage.getItem("characterInfo") != null) {   //로컬 스토리지에 캐릭터에 대한 정보가 있으면(게임이 진행 중일 경우)
+            let storedCharacterData = localStorage.getItem('characterInfo');
+            let characterDataObject = JSON.parse(storedCharacterData);
+            this._character = this.characterFromJson(characterDataObject)
+        } else {    //데이터가 없을 경우 (게임시작)
+            this._character = new Character(loader, "../../assets/models/character.glb", { x: 590, y: 50, z: 992 });
+        }
 
         var goal1 = new GoalPoint(loader, "../../assets/models/_endpoint.glb", { x: -1277, y: -135, z: -1153 }, () => {
             this._goalList.push(goal1);
@@ -100,30 +106,39 @@ class App {
 
         var gameType = ["bitwise", "escape", "keyboard", "t-rex", "unique_object"]
 
-        // 무당이
-        var coffee1 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[0], { x: 461, y: -130, z: 999.5 }, () => {
-            this._coffeeList.push(coffee1);
-        });
+        if (localStorage.getItem("coffeeInfo") != null) {  //로컬 스토리지에 커피에 대한 정보가 있으면(게임이 진행 중일 경우)
+            let storedCoffeeDataList = localStorage.getItem('coffeeInfo');
+            let coffeeDataObjectList = JSON.parse(storedCoffeeDataList);
+            for (var i = 0; i < coffeeDataObjectList.list.length; i++) {
+                this.coffeeFromJson(coffeeDataObjectList.list[i]);
+            }
+        } else {    //데이터가 없을 경우 (게임시작)
+            // 무당이
+            var coffee1 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[0], { x: 461, y: -130, z: 999.5 }, () => {
+                this._coffeeList.push(coffee1);
+            });
 
-        // 비타방향
-        var coffee2 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[1], { x: 595, y: -74, z: 760 }, () => {
-            this._coffeeList.push(coffee2);
-        });
+            // 비타방향
+            var coffee2 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[1], { x: 595, y: -74, z: 760 }, () => {
+                this._coffeeList.push(coffee2);
+            });
 
-        // 예체대 방향
-        var coffee3 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[2], { x: 203, y: -119, z: 884 }, () => {
-            this._coffeeList.push(coffee3);
-        });
+            // 예체대 방향
+            var coffee3 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[2], { x: 203, y: -119, z: 884 }, () => {
+                this._coffeeList.push(coffee3);
+            });
 
-        //오르막길
-        var coffee4 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[3], { x: 175, y: -75, z: 651 }, () => {
-            this._coffeeList.push(coffee4);
-        });
+            //오르막길
+            var coffee4 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[3], { x: 175, y: -75, z: 651 }, () => {
+                this._coffeeList.push(coffee4);
+            });
 
-        //중도
-        var coffee5 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[4], { x: -275, y: 79, z: -191 }, () => {
-            this._coffeeList.push(coffee5);
-        });
+            //중도
+            var coffee5 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[4], { x: -275, y: 79, z: -191 }, () => {
+                this._coffeeList.push(coffee5);
+            });
+        }
+
 
 
         // =========== Map ===========
@@ -231,6 +246,18 @@ class App {
 
     // ========= For load game =========
 
+    coffeeToJson() {
+        var jsonList = [];
+        for (var i = 0; i < this._coffeeList.length; i++) {
+            jsonList.push(this._coffeeList[i].toJson());
+        }
+
+        var jsonObject = {
+            'list': jsonList
+        }
+
+        return jsonObject
+    }
     // jsonObject를 받아서 커피 오브젝트를 생성하고 coffeeList에 추가한다.
     // 반환된 coffee 오브젝트는 혹시 몰라서 리턴한거임 안써도 됨
     coffeeFromJson(jsonObject) {
@@ -245,7 +272,7 @@ class App {
     // jsonObject를 받아서 캐릭터 오브젝트를 생성하고 리턴한다.
     characterFromJson(jsonObject) {
         var loader = new GLTFLoader();
-        var character = new Character(loader, "../../assets/models/gachon.glb", { x: jsonObject.x, y: jsonObject.y, z: jsonObject.z });
+        var character = new Character(loader, "../../assets/models/character.glb", { x: jsonObject.x, y: jsonObject.y, z: jsonObject.z });
         character.hp = jsonObject.hp;
 
         return character;
@@ -293,9 +320,16 @@ class App {
             var collisionIndex = this._character.collisionWithCoffee(this._coffeeList);
             if (collisionIndex != -1) {
                 //여기서 페이지 넘어가고 거임 성공여부에 따라 채력 올려주는거 구현해
-
+                let minigameURL = "/src/minigame/" + this._coffeeList[collisionIndex]._minigame + "/" + this._coffeeList[collisionIndex]._minigame + ".html"
                 this._scene.remove(this._coffeeList[collisionIndex]._model);
                 this._coffeeList.splice(collisionIndex, 1);
+
+                //로컬 스토리지에 미니게임 진입 전 캐릭터, 커피 정보 저장
+                localStorage.setItem('characterInfo', JSON.stringify(this._character.toJson()));
+                localStorage.setItem('coffeeInfo', JSON.stringify(this.coffeeToJson()));
+                
+                window.location.href = minigameURL;
+
             }
             this._character.collisionWithGoal(this._goalList);
             this._character.update(deltaTime, this._camera);

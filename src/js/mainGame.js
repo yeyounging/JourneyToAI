@@ -210,16 +210,11 @@ class App {
         const ambientLight = new THREE.AmbientLight(0xffffff, 4);
         this._scene.add(ambientLight);
 
-        this._addPointLight(500, 150, 500, 0xff0000, { intensity: 3 });
-        this._addPointLight(-500, 150, 500, 0xffff00, { intensity: 3 });
-        this._addPointLight(-500, 150, -500, 0x00ff00, { intensity: 3 });
-        this._addPointLight(500, 150, -500, 0x0000ff, { intensity: 3 });
+        this._addPointLight(500, 500, 500, 0xff0000, { intensity: 20 });
 
         const shadowLight = new THREE.DirectionalLight(0xffffff, 0.2);
         shadowLight.position.set(200, 500, 200);
         shadowLight.target.position.set(0, 0, 0);
-        // const directionalLightHelper = new THREE.DirectionalLightHelper(shadowLight, 10);
-        // this._scene.add(directionalLightHelper);
 
         this._scene.add(shadowLight);
         this._scene.add(shadowLight.target);
@@ -232,8 +227,6 @@ class App {
         shadowLight.shadow.camera.near = 100;
         shadowLight.shadow.camera.far = 900;
         shadowLight.shadow.radius = 5;
-        // const shadowCameraHelper = new THREE.CameraHelper(shadowLight.shadow.camera);
-        // this._scene.add(shadowCameraHelper);
     }
 
     _addPointLight(x, y, z, helperColor, { color = 0xffffff, intensity = 1.5, distance = 2000 }) {

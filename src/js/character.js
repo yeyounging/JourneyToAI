@@ -287,7 +287,8 @@ class Character {
 
             if (!this._bOnTheGround) {
                 this._fallingAcceleration += 1;
-                this._fallingSpeed += Math.pow(this._fallingAcceleration, 2);
+                // this._fallingSpeed += Math.pow(this._fallingAcceleration, 2);
+                this._fallingSpeed += this._fallingAcceleration;
             } else {
                 this._fallingAcceleration = 0;
                 this._fallingSpeed = 0;

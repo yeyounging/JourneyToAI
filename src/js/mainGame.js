@@ -8,6 +8,7 @@ import { Capsule } from "Capsule"               //For collision detection (chara
 import { Character } from './character.js'      //Character class
 import { Coffee } from './coffee.js'            //Coffee class
 import { GoalPoint } from './goalPoint.js'
+
 class App {
     constructor() {
         const divContainer = document.querySelector("#webgl-container");

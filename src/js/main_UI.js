@@ -7,6 +7,7 @@ let totalmili = 0;
 let resultString;
 let lapTimes;
 
+
 function startTimer() {
     if (!running) {
         running = true;

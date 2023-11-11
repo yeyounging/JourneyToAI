@@ -294,8 +294,8 @@ class App {
             if (collisionIndex != -1) {
                 //여기서 페이지 넘어가고 거임 성공여부에 따라 채력 올려주는거 구현해
 
-
-                // this._coffeeList.remove(collisionIndex);
+                this._scene.remove(this._coffeeList[collisionIndex]._model);
+                this._coffeeList.splice(collisionIndex, 1);
             }
             this._character.collisionWithGoal(this._goalList);
             this._character.update(deltaTime, this._camera);

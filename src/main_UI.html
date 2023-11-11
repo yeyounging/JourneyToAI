@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Main UI</title>
+        <link rel="stylesheet" type="text/css" href="./css/main_UI.css">
+    </head>
+    <body>
+        <div class="game-start-page">
+            <div class="timer">
+                <header><p id="timerDisplay">00:00:00</p></header>
+            </div>
+            <br>
+            <div>
+                <button id="startButton" onclick="gameStart()">게임 시작</button>
+                <button id="reStartButton" onclick="gameStart()">게임 재시작</button>
+            </div>
+            <div id="localStorageContent" class="Rank"></div>
+           <button onclick="endGame()">Game End Event</button>
+        </div>
+        <script src="./js/main_UI.js"></script>
+    </body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Crete+Round:ital@0;1&family=Varela+Round&display=swap"
+        rel="stylesheet">
+    <title>공 피하기 게임</title>
+    <style>
+        body {
+            font-family: 'Varela Round', sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: url("../../../assets/img/ballBackground.png");
+            background-size: 100% 100%;
+            flex-direction: column;
+        }
+        h1 {
+            margin-right: 20px;
+            color: #ffffff;
+            font-size: 50px;
+        }
+        canvas {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Avoid From Moodang!!</h1>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+</body>
+
+</html>
+<script>
+
+    // 캔버스 요소 가져오기
+    const canvas = document.getElementById('gameCanvas');
+    const context = canvas.getContext('2d');
+
+    // 이미지 로드
+    const playerImage = new Image();
+    playerImage.src = '../../../assets/img/player.png';
+    const missileImage = new Image();
+    missileImage.src = '../../../assets/img/moodang.png';
+
+
+    // 게임 상태 변수
+    let gameOver = false;
+    let score = 0;
+    let time = 0;
+    let player = {
+        x: canvas.width / 2,
+        y: canvas.height - 50,
+        width: 40,
+        height: 40
+    };
+    let missiles = [];
+
+
+    // 키 이벤트 핸들러 등록
+    document.addEventListener('keydown', function (event) {
+        if (event.code === 'Escape') {
+            gameOver = true;
+        }
+    });
+
+    // 마우스 이벤트 핸들러 등록
+    canvas.addEventListener('mousemove', function (event) {
+        if (!gameOver) {
+            player.x = event.clientX - canvas.offsetLeft;
+        }
+    });
+
+
+    // 게임 루프 함수
+    function gameLoop() {
+        // 게임 종료 시 게임 루프 중지
+        if (gameOver) {
+            if (score < 1000) {
+                window.location.href = '../../minigame/result/failure.html';
+            } else {
+                window.location.href = '../../minigame/result/success.html';
+            }
+            return;
+        }
+
+        // 게임 상태 업데이트
+        time++;
+        if (time % 50 === 0) {
+            missiles.push({
+                x: Math.random() * canvas.width,
+                y: 0,
+                width: 20,
+                height: 20,
+                speed: 5 + time / 500
+            });
+        }
+        for (let i = 0; i < missiles.length; i++) {
+            missiles[i].y += missiles[i].speed;
+            if (missiles[i].y > canvas.height) {
+                missiles.splice(i, 1);
+                i--;
+            } else {
+                let distance = Math.sqrt(Math.pow(player.x - missiles[i].x, 2) + Math.pow(player.y - missiles[i].y, 2));
+                // 충돌 검사
+                if (distance < player.width / 2 + missiles[i].width / 2) {
+                    gameOver = true;
+                }
+            }
+        }
+        score++;
+
+        // 게임 화면 그리기
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(playerImage, player.x - player.width / 2, player.y - player.height / 2, player.width * 2, player.height * 2);
+
+        for (let i = 0; i < missiles.length; i++) {
+            context.drawImage(missileImage, missiles[i].x - missiles[i].width / 2, missiles[i].y - missiles[i].height / 2, missiles[i].width * 7, missiles[i].height * 7);
+        }
+        context.fillStyle = 'black';
+        context.font = '24px Arial';
+        context.fillText('Score: ' + score, 10, 30);
+
+        if (score == 1000) {
+            gameOver = true;
+        }
+
+        // 다음 프레임 실행
+        requestAnimationFrame(gameLoop);
+    }
+
+    // 게임 루프 시작
+    requestAnimationFrame(gameLoop);
+
+</script>

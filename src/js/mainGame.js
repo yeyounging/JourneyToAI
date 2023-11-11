@@ -290,7 +290,13 @@ class App {
 
         if (this._character._isAddedToScene == true) {
             this._character.collisionWithOctree(this._worldOctree);
-            this._character.collisionWithCoffee(this._coffeeList);
+            var collisionIndex = this._character.collisionWithCoffee(this._coffeeList);
+            if (collisionIndex != -1) {
+                //여기서 페이지 넘어가고 거임 성공여부에 따라 채력 올려주는거 구현해
+
+
+                // this._coffeeList.remove(collisionIndex);
+            }
             this._character.collisionWithGoal(this._goalList);
             this._character.update(deltaTime, this._camera);
             this._camera = this._character.fixCameraToModel(this._camera);

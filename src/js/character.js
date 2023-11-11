@@ -197,11 +197,15 @@ class Character {
     }
 
     collisionWithCoffee(coffeeList) {
+        var collisionIndex = -1;
         for (let i = 0; i < coffeeList.length; i++) {
             if (this._model._capsule.intersectsBox(coffeeList[i]._collisionBox)) {
                 console.log("Collision with coffee");
+                collisionIndex = i;
             }
         }
+
+        return collisionIndex;
     }
 
     collisionWithGoal(goalList) {

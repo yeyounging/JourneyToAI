@@ -104,7 +104,7 @@ class App {
             this._character = new Character(loader, "../../assets/models/character.glb", { x: 590, y: 50, z: 992 });
         }
 
-        var goal1 = new GoalPoint(loader, "../../assets/models/_endpoint.glb", { x: -1277, y: -135, z: -1153 }, () => {
+        var goal1 = new GoalPoint(loader, "../../assets/models/_endpoint.glb", { x: -1397, y: -135, z: -683 }, () => {
             this._goalList.push(goal1);
         });
         var goal2 = new GoalPoint(loader, "../../assets/models/_endpoint.glb", { x: -968, y: 79, z: -927 }, () => {
@@ -141,7 +141,7 @@ class App {
             });
 
             //중도
-            var coffee5 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[4], { x: -275, y: 79, z: -191 }, () => {
+            var coffee5 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[4], { x: -612, y: 42, z: -344 }, () => {
                 this._coffeeList.push(coffee5);
             });
         }
@@ -298,6 +298,13 @@ class App {
         return character;
     }
 
+    gameRestart() {
+        localStorage.removeItem('characterInfo');
+        localStorage.removeItem('coffeeInfo');
+        window.location.reload();
+
+    }
+
     // =================================
 
     // =========== Realtime update ===========
@@ -347,22 +354,17 @@ class App {
                 //로컬 스토리지에 미니게임 진입 전 캐릭터, 커피 정보 저장
                 localStorage.setItem('characterInfo', JSON.stringify(this._character.toJson()));
                 localStorage.setItem('coffeeInfo', JSON.stringify(this.coffeeToJson()));
-                localStorage.setItem('')
                 window.location.href = minigameURL;
 
             }
             var isCollisionWithGoal = this._character.collisionWithGoal(this._goalList);
             if (isCollisionWithGoal != -1) {
                 this._goalList.splice(isCollisionWithGoal, 1);
-                localStorage.removeItem('characterInfo');
-                localStorage.removeItem('coffeeInfo');
-
                 endGame();
-                window.location.reload();
+
+                this.gameRestart();
+
             }
-
-
-
 
             this._character.update(deltaTime, this._camera);
             this._camera = this._character.fixCameraToModel(this._camera);

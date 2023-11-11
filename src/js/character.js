@@ -3,17 +3,20 @@ import { GLTFLoader } from 'GLTFLoader'
 import { Octree } from "Octree"
 import { Capsule } from "Capsule"
 
+import { running } from './main_UI.js'
+
 // Character class
 // 
 class Character {
     constructor(loader, modelUrl, { x = 0, y = 0, z = 0 }) {
+        var hp = 100;
+        this.hp = hp;
         loader.load(modelUrl, (gltf) => {
             this._model = gltf.scene;
             this._model.children[0].position.set(0, 0, 0);
             this._model.children[0].lookAt(0, 0, -1);
 
-            var hp = 100;
-            this.hp = hp;
+
 
             console.log(this._model)
 
@@ -242,7 +245,6 @@ class Character {
 
     // Update
     update(deltaTime, camera) {
-        this._elapsedTime += deltaTime;
         if (this._boxHelper) {
             this._boxHelper.update();
         }
@@ -255,16 +257,21 @@ class Character {
         }
         //=====================================
 
-        if (this._elapsedTime > 0.5) {
-            if (this.hp <= 0)
-                this.hp = 0;
-            else {
-                this.hp -= 1;
-                this._elapsedTime = 0;
+        if (running) {
+            this._elapsedTime += deltaTime;
+            if (this._elapsedTime > 0.5) {
+                if (this.hp <= 0)
+                    this.hp = 0;
+                else {
+                    this.hp -= 1;
+                    this._elapsedTime = 0;
 
+                }
+                console.log(this.hp);
             }
-            console.log(this.hp);
+
         }
+
 
         if (this._mixer) {
             this._mixer.update(deltaTime);
@@ -302,11 +309,15 @@ class Character {
                 this._fallingSpeed = 0;
             }
 
-            const velocity = new THREE.Vector3(
-                this._walkDirection.x * this._speed * (this.hp / 100),
-                this._walkDirection.y * this._fallingSpeed,
-                this._walkDirection.z * this._speed * (this.hp / 100)
-            );
+            var velocity = new THREE.Vector3(0, this._walkDirection.y * this._fallingSpeed, 0);
+            if (running) {
+                velocity = new THREE.Vector3(
+                    this._walkDirection.x * this._speed * (this.hp / 100),
+                    this._walkDirection.y * this._fallingSpeed,
+                    this._walkDirection.z * this._speed * (this.hp / 100)
+                );
+            }
+
 
             const deltaPosition = velocity.clone().multiplyScalar(deltaTime);
 

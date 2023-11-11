@@ -1,5 +1,5 @@
 let timer;
-let running = false;
+export let running = false;
 let mili = 0;
 let seconds = 0;
 let minutes = 0;
@@ -93,7 +93,6 @@ export function gameStart() {
     minutes = 0;
     totalmili = 0;
     var startB = document.getElementById('startButton');
-    var reStartB = document.getElementById('reStartButton');
     startB.addEventListener('click', startTimer());
     startB.style.display = 'none';
     displayRank();

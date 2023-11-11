@@ -35,8 +35,16 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
-
-button#startButton {
+#startButton{
+    align-items: center;
+    text-align: center;
+    padding: 20px 40px;
+    font-size: 18px;
+    position: absolute;
+    top: 50%;
+    left: 45%;
+}
+/* button#startButton {
     align-items: center;
     text-align: center;
     padding: 20px 40px;
@@ -49,8 +57,8 @@ button#startButton {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-}
-
+} */
+/* 
 button#reStartButton{
     align-items: center;
     text-align: center;
@@ -65,7 +73,7 @@ button#reStartButton{
     border-radius: 5px;
     cursor: pointer;
     display: none;
-}
+} */
 
 button#startButton:hover {
     background-color: #2980b9;

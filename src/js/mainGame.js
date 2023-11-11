@@ -347,7 +347,7 @@ class App {
                 //로컬 스토리지에 미니게임 진입 전 캐릭터, 커피 정보 저장
                 localStorage.setItem('characterInfo', JSON.stringify(this._character.toJson()));
                 localStorage.setItem('coffeeInfo', JSON.stringify(this.coffeeToJson()));
-                
+                localStorage.setItem('')
                 window.location.href = minigameURL;
 
             }

@@ -98,28 +98,30 @@ class App {
             this._goalList.push(goal2);
         });
 
+        var gameType = ["bitwise", "escape", "keyboard", "t-rex", "unique_object"]
+
         // 무당이
-        var coffee1 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 461, y: -130, z: 999.5 }, () => {
+        var coffee1 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[0], { x: 461, y: -130, z: 999.5 }, () => {
             this._coffeeList.push(coffee1);
         });
 
         // 비타방향
-        var coffee2 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 595, y: -74, z: 760 }, () => {
+        var coffee2 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[1], { x: 595, y: -74, z: 760 }, () => {
             this._coffeeList.push(coffee2);
         });
 
         // 예체대 방향
-        var coffee3 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 203, y: -119, z: 884 }, () => {
+        var coffee3 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[2], { x: 203, y: -119, z: 884 }, () => {
             this._coffeeList.push(coffee3);
         });
 
         //오르막길
-        var coffee4 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 175, y: -75, z: 651 }, () => {
+        var coffee4 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[3], { x: 175, y: -75, z: 651 }, () => {
             this._coffeeList.push(coffee4);
         });
 
         //중도
-        var coffee5 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: -275, y: 79, z: -191 }, () => {
+        var coffee5 = new Coffee(loader, "../../assets/models/coffee.glb", gameType[4], { x: -275, y: 79, z: -191 }, () => {
             this._coffeeList.push(coffee5);
         });
 

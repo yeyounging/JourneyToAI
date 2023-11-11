@@ -68,6 +68,7 @@ class Character {
             this._fallingAcceleration = 0;
             this._fallingSpeed = 0;
             this._previousDirectionOffset = 0;
+            this._elapsedTime = 0;
 
             this._walkDirection = new THREE.Vector3(1, 0, 0);
             this._isAddedToScene = false;
@@ -233,6 +234,7 @@ class Character {
 
     // Update
     update(deltaTime, camera) {
+        this._elapsedTime += deltaTime;
         if (this._boxHelper) {
             this._boxHelper.update();
         }
@@ -245,7 +247,16 @@ class Character {
         }
         //=====================================
 
+        if (this._elapsedTime > 0.5) {
+            if (this.hp <= 0)
+                this.hp = 0;
+            else {
+                this.hp -= 1;
+                this._elapsedTime = 0;
 
+            }
+            console.log(this.hp);
+        }
 
         if (this._mixer) {
             this._mixer.update(deltaTime);

@@ -42,7 +42,9 @@ class App {
 
         // ======= HTML Init ========
         var startButton = document.getElementById('startButton');
+        var reStartButton = document.getElementById('reStartButton');
         startButton.onclick = gameStart;
+        reStartButton.onclick = this.gameRestart;
 
 
         window.onresize = this.resize.bind(this);

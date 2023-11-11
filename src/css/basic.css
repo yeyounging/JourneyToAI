@@ -44,6 +44,15 @@ body {
     top: 50%;
     left: 45%;
 }
+
+#reStartButton{
+    text-align: center;
+    padding: 16px 25px;
+    font-size: 10px;
+    position: absolute;
+    top: 0%;
+    left: 5.3%;
+}
 /* button#startButton {
     align-items: center;
     text-align: center;

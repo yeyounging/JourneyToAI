@@ -471,7 +471,7 @@ class Octree {
 
 	}
 
-	fromGraphNode(group) {
+	fromGraphNode(group, completeAction) {
 
 		group.updateWorldMatrix(true, true);
 
@@ -514,9 +514,13 @@ class Octree {
 
 				}
 
+
+
 			}
 
 		});
+
+		completeAction();
 
 		this.build();
 

@@ -44,9 +44,9 @@ class App {
     }
 
     // =========== Logical part ===========
-    _setupOctree(model) {
+    _setupOctree(model, completeAction) {
         this._worldOctree = new Octree();
-        this._worldOctree.fromGraphNode(model);
+        this._worldOctree.fromGraphNode(model, completeAction);
     }
 
     _setupControls() {
@@ -88,19 +88,39 @@ class App {
 
         // =========== Character ===========
         // 생성자의 중괄호 안에 x, y, z좌표를 입력하여 캐릭터의 시작 위치를 변경할 수 있다.
-        this._character = new Character(loader, "../../assets/models/character.glb", { x: 405, y: 0, z: 1002 });
+        this._character = new Character(loader, "../../assets/models/character.glb", { x: 405, y: 50, z: 1002 });
 
-        // var goal1 = new GoalPoint(loader, "../../assets/models/goal.glb", { x: 10, y: 0, z: -30 }, () => {
-        //     this._goalList.push(goal1);
-        // });
+        var goal1 = new GoalPoint(loader, "../../assets/models/goal.glb", { x: -1277, y: -135, z: -1153 }, () => {
+            this._goalList.push(goal1);
+        });
+        var goal2 = new GoalPoint(loader, "../../assets/models/goal.glb", { x: -968, y: 79, z: -927 }, () => {
+            this._goalList.push(goal2);
+        });
 
-        // var coffee1 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 10, y: 0, z: -30 }, () => {
-        //     this._coffeeList.push(coffee1);
-        // });
+        // 무당이
+        var coffee1 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 461, y: -130, z: 999.5 }, () => {
+            this._coffeeList.push(coffee1);
+        });
 
-        // var coffee2 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 10, y: 50, z: -130 }, () => {
-        //     this._coffeeList.push(coffee2);
-        // });
+        // 비타방향
+        var coffee2 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 595, y: -74, z: 760 }, () => {
+            this._coffeeList.push(coffee2);
+        });
+
+        // 예체대 방향
+        var coffee3 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 203, y: -119, z: 884 }, () => {
+            this._coffeeList.push(coffee3);
+        });
+
+        //오르막길
+        var coffee4 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: 175, y: -75, z: 651 }, () => {
+            this._coffeeList.push(coffee4);
+        });
+
+        //중도
+        var coffee5 = new Coffee(loader, "../../assets/models/coffee.glb", "minigame type", { x: -275, y: 79, z: -191 }, () => {
+            this._coffeeList.push(coffee5);
+        });
 
 
         // =========== Map ===========
@@ -120,23 +140,12 @@ class App {
                 }
             });
 
-
+            this._mapLoaded = true;
         });
-        // loader.load("../../assets/models/CrashBox.glb", (gltf) => {
-        //     console.log("crashbox loaded");
-        //     const model = gltf.scene;
-        //     model.scale.set(10, 10, 10);
-        //     model.position.set(0, 0, 0);
-        //     this._crashBox = model;
 
-        //     this._setupOctree(this._crashBox);
-        //     this._mapLoaded = true;
-        //     console.log("octree complete");
-        // });
-
-        this._mapLoaded = false;
+        this._CrashBoxLoaded = false;
         loader.load("../../assets/models/CrashBox.glb", (gltf) => {
-            console.log("map loaded");
+            console.log("CrashBox loaded");
             const model = gltf.scene;
             model.scale.set(10, 10, 10);
             model.position.set(0, 0, 0);
@@ -150,13 +159,12 @@ class App {
             //     }
             // });
 
-            this._setupOctree(model);
-            this._mapLoaded = true;
-            console.log("octree complete");
+            this._setupOctree(model, () => {
+                this._CrashBoxLoaded = true;
+                console.log("octree complete");
+            });
         });
         // ================
-
-
     }
 
     // =========== Camera ===========
@@ -255,7 +263,9 @@ class App {
         this._previousTime = time;
 
         // Ready to all components are loaded
-        if (this._mapLoaded == false) {
+        if (this._mapLoaded == false || this._CrashBoxLoaded == false) {
+            console.log(this._mapLoaded);
+            console.log(this._CrashBoxLoaded);
             return;
         }
 
@@ -275,16 +285,13 @@ class App {
             }
         }
 
-
         if (this._character._isAddedToScene == true) {
-            if (this._worldOctree) {
-                this._character.collisionWithOctree(this._worldOctree);
-                this._character.collisionWithCoffee(this._coffeeList);
-                this._character.collisionWithGoal(this._goalList);
-                this._character.update(deltaTime, this._camera);
-                this._camera = this._character.fixCameraToModel(this._camera);
-                this._controls = this._character.fixControlToModel(this._controls);
-            }
+            this._character.collisionWithOctree(this._worldOctree);
+            this._character.collisionWithCoffee(this._coffeeList);
+            this._character.collisionWithGoal(this._goalList);
+            this._character.update(deltaTime, this._camera);
+            this._camera = this._character.fixCameraToModel(this._camera);
+            this._controls = this._character.fixControlToModel(this._controls);
         }
     }
 

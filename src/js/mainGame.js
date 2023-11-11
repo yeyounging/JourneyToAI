@@ -10,6 +10,8 @@ import { Coffee } from './coffee.js'            //Coffee class
 import { GoalPoint } from './goalPoint.js'
 import { endGame } from './main_UI.js'
 import { gameStart } from './main_UI.js'
+import { storeTimer } from './main_UI.js'
+import { callTimer } from './main_UI.js'
 
 class App {
     constructor() {
@@ -148,7 +150,9 @@ class App {
             });
         }
 
-
+        if(localStorage.getItem("tempTimer") != null){
+            callTimer();
+        }
 
         // =========== Map ===========
         this._mapLoaded = false;
@@ -294,6 +298,7 @@ class App {
     }
 
     gameRestart() {
+        localStorage.removeItem('tempTimer');
         localStorage.removeItem('characterInfo');
         localStorage.removeItem('coffeeInfo');
         window.location.reload();
@@ -349,6 +354,8 @@ class App {
                 //로컬 스토리지에 미니게임 진입 전 캐릭터, 커피 정보 저장
                 localStorage.setItem('characterInfo', JSON.stringify(this._character.toJson()));
                 localStorage.setItem('coffeeInfo', JSON.stringify(this.coffeeToJson()));
+                //로컬 스토리지에 현제 랩타임 밀리세컨드로 저장
+                storeTimer();
 
                 /**
                  * to 민성
@@ -367,9 +374,8 @@ class App {
             if (isCollisionWithGoal != -1) {
                 this._goalList.splice(isCollisionWithGoal, 1);
                 endGame();
-
+                
                 this.gameRestart();
-
             }
 
             this._character.update(deltaTime, this._camera);

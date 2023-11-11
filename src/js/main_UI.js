@@ -29,6 +29,15 @@ function updateTimer() {
     updateDisplay();
 }
 
+function updateTimerInGame(){
+    seconds = Math.floor(mili/100);
+    mili = mili % 100;
+    minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+
+    updateDisplay();
+}
+
 function stopTimer() {
     running = false;
     clearInterval(timer);
@@ -88,15 +97,12 @@ function displayRank() {
 }
 
 export function gameStart() {
-    mili = 0;
-    seconds = 0;
-    minutes = 0;
-    totalmili = 0;
     var startB = document.getElementById('startButton');
     startB.addEventListener('click', startTimer());
     startB.style.display = 'none';
     displayRank();
 }
+
 
 export function endGame() {
     var userName = prompt('Input user name:');
@@ -120,4 +126,21 @@ export function endGame() {
         displayRank();
         stopTimer();
     }
+}
+
+export function storeTimer(){
+
+    var tempLapTimeString = localStorage.getItem('tempTimer');
+    if (!tempLapTimeString) {
+        var initialLapTimes = 0.0;
+        localStorage.setItem('tempTimer', JSON.stringify(initialLapTimes));
+    }
+
+    localStorage.setItem('tempTimer', JSON.stringify(totalmili));
+}
+
+export function callTimer(){
+    totalmili = localStorage.getItem('tempTimer');
+    mili = totalmili;
+    updateTimerInGame();
 }

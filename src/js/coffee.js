@@ -1,7 +1,6 @@
-import * as THREE from 'three'
-import { GLTFLoader } from 'GLTFLoader'
-import { Octree } from "Octree"
-import { Capsule } from "Capsule"
+import * as THREE from 'three';
+import { GLTFLoader } from 'GLTFLoader';
+import { Capsule } from 'Capsule';
 
 class Coffee {
     constructor(loader, modelUrl, minigame, { x = 0, y = 0, z = 0 }, callback) {
@@ -20,7 +19,7 @@ class Coffee {
                 }
             });
 
-            const box = (new THREE.Box3).setFromObject(this._model);
+            const box = new THREE.Box3().setFromObject(this._model);
 
             // For Collision
             this._collisionBox = box;
@@ -41,6 +40,8 @@ class Coffee {
 
     setPosition(x, y, z) {
         this._model.position.set(x, y, z);
+        const diameter = (this._collisionBox.max.z - this._collisionBox.min.z);
+        const height = this._collisionBox.max.y - this._collisionBox.min.y;
         this._model._capsule = new Capsule(
             new THREE.Vector3(x, y + diameter / 2, z),
             new THREE.Vector3(x, y + height - diameter / 2, z),
@@ -48,23 +49,22 @@ class Coffee {
         );
     }
 
-
     update() {
         this._collisionBox.update();
     }
 
-    // 게임 저장, 로드에 필요한 오브젝트 정보 json으로 변환
-    // 문자열이 아닌 json오브젝트로 파싱하기때문에 JSON.stringify로 파싱해야 string으로 사용 가능
+    // Convert object information to JSON for game save and load
+    // Parse as a JSON object, so use JSON.stringify to use it as a string
     toJson() {
-        var jsonObject = {
-            "x": this._model.position.x,
-            "y": this._model.position.y,
-            "z": this._model.position.z,
-            "minigame": this._minigame
+        const jsonObject = {
+            x: this._model.position.x,
+            y: this._model.position.y,
+            z: this._model.position.z,
+            minigame: this._minigame,
         };
 
         return jsonObject;
     }
 }
 
-export { Coffee }
+export { Coffee };

@@ -8,62 +8,67 @@ import { running } from './main_UI.js'
 // Character class
 // 
 class Character {
+    // Character class constructor
     constructor(loader, modelUrl, { x = 0, y = 0, z = 0 }) {
+        // Default HP set to 100
         var hp = 100;
         this.hp = hp;
+
+        // Loading the 3D model
         loader.load(modelUrl, (gltf) => {
+            // Accessing the model from the loaded GLTF scene
             this._model = gltf.scene;
+
+            // Positioning and orienting the model
             this._model.children[0].position.set(0, 0, 0);
             this._model.children[0].lookAt(0, 0, -1);
 
-
-
-            console.log(this._model)
-
+            // Setting up shadow casting for meshes in the model
             this._model.traverse(child => {
                 if (child instanceof THREE.Mesh) {
                     child.castShadow = true;
                 }
             });
 
-            // ==   For animation   ==
-            const animationClips = gltf.animations; // THREE.AnimationClip[]
+            // Animation setup
+            const animationClips = gltf.animations; // Array of animation clips
             const mixer = new THREE.AnimationMixer(this._model);
             const animationsMap = {};
+
+            // Creating a map of animation clips for easy access
             animationClips.forEach(clip => {
                 const name = clip.name;
-                console.log(name);
-                animationsMap[name] = mixer.clipAction(clip); // THREE.AnimationAction
+                animationsMap[name] = mixer.clipAction(clip);
             });
 
-            // For animation
+            // Assigning animation-related properties to the character
             this._mixer = mixer;
             this._animationMap = animationsMap;
             this._currentAnimationAction = this._animationMap["stopped"];
             this._currentAnimationAction.play();
-            // ====
 
-            const box = (new THREE.Box3).setFromObject(this._model);
+            // Retrieving dimensions of the model's bounding box
+            const box = new THREE.Box3().setFromObject(this._model);
             this._model.position.y = (box.min.y - box.max.y) / 2;
-            console.log(box);
-
             const height = box.max.y - box.min.y;
-            this._boxHeight = height;
-            const diameter = (box.max.z - box.min.z);
-            this._diameter = diameter;
-            console.log(diameter)
+            const diameter = box.max.z - box.min.z;
 
-            // For Collision
+            // Storing dimensions for collision detection
+            this._boxHeight = height;
+            this._diameter = diameter;
+
+            // Creating a capsule for collision detection
             this._model._capsule = new Capsule(
                 new THREE.Vector3(x, y + diameter / 2, z),
                 new THREE.Vector3(x, y + height - diameter / 2, z),
                 diameter / 2
             );
 
+            // Creating a box helper for visualization (optional)
             const boxHelper = new THREE.BoxHelper(this._model);
             this._boxHelper = boxHelper;
 
-            // For movement
+            // Movement and control properties
             this._speed = 0;
             this._maxSpeed = 0;
             this._acceleration = 0;
@@ -72,16 +77,18 @@ class Character {
             this._fallingSpeed = 0;
             this._previousDirectionOffset = 0;
             this._elapsedTime = 0;
-
             this._walkDirection = new THREE.Vector3(1, 0, 0);
             this._isAddedToScene = false;
 
+            // Setting up keyboard controls
             this._setupControls();
         });
     }
 
+    // Method to add the character model to the scene
     setupScene(scene) {
         scene.add(this._model);
+        // Uncomment the line below if you want to add a box helper for visualization
         // scene.add(this._boxHelper);
 
         this._isAddedToScene = true;
@@ -89,46 +96,49 @@ class Character {
         return scene;
     }
 
-    // User key input correspondence
+    // Method to set up keyboard controls for the character
     _setupControls() {
         this._pressedKeys = {};
 
+        // Event listener for keydown to track pressed keys
         document.addEventListener("keydown", (event) => {
             this._pressedKeys[event.key.toLowerCase()] = true;
-            this._processAnimation();
+            this._processAnimation(); // Trigger animation based on key input
         });
 
+        // Event listener for keyup to track released keys
         document.addEventListener("keyup", (event) => {
             this._pressedKeys[event.key.toLowerCase()] = false;
-            this._processAnimation();
+            this._processAnimation(); // Trigger animation based on key input
         });
     }
 
-    // User key input correspondence (Move direction)
+
+    // Method to calculate the offset for the character's movement direction based on pressed keys
     _directionOffset() {
         const pressedKeys = this._pressedKeys;
-        let directionOffset = 0 // w
+        let directionOffset = 0; // Default: forward (w key)
 
         if (pressedKeys['w']) {
             if (pressedKeys['a']) {
-                directionOffset = Math.PI / 4 // w+a (45도)
+                directionOffset = Math.PI / 4; // Forward-left (45 degrees)
             } else if (pressedKeys['d']) {
-                directionOffset = - Math.PI / 4 // w+d (-45도)
+                directionOffset = -Math.PI / 4; // Forward-right (-45 degrees)
             }
         } else if (pressedKeys['s']) {
             if (pressedKeys['a']) {
-                directionOffset = Math.PI / 4 + Math.PI / 2 // s+a (135도)
+                directionOffset = Math.PI / 4 + Math.PI / 2; // Backward-left (135 degrees)
             } else if (pressedKeys['d']) {
-                directionOffset = -Math.PI / 4 - Math.PI / 2 // s+d (-135도)
+                directionOffset = -Math.PI / 4 - Math.PI / 2; // Backward-right (-135 degrees)
             } else {
-                directionOffset = Math.PI // s (180도)
+                directionOffset = Math.PI; // Backward (180 degrees)
             }
         } else if (pressedKeys['a']) {
-            directionOffset = Math.PI / 2 // a (90도)
+            directionOffset = Math.PI / 2; // Left (90 degrees)
         } else if (pressedKeys['d']) {
-            directionOffset = - Math.PI / 2 // d (-90도)
+            directionOffset = -Math.PI / 2; // Right (-90 degrees)
         } else {
-            directionOffset = this._previousDirectionOffset;
+            directionOffset = this._previousDirectionOffset; // Maintain previous direction if no key is pressed
         }
 
         this._previousDirectionOffset = directionOffset;
@@ -136,42 +146,50 @@ class Character {
         return directionOffset;
     }
 
-    // User key input correspondence (Animation)
+    // Method to handle character animations based on user key input
     _processAnimation() {
         const previousAnimationAction = this._currentAnimationAction;
 
+        // Determine animation based on pressed keys
         if (this._pressedKeys["w"] || this._pressedKeys["a"] || this._pressedKeys["s"] || this._pressedKeys["d"]) {
             if (this._pressedKeys["shift"]) {
+                // Run animation
                 this._currentAnimationAction = this._animationMap["walk"];
                 this._maxSpeed = 150;
                 this._acceleration = 3;
             } else {
+                // Walk animation
                 this._currentAnimationAction = this._animationMap["walk"];
                 this._maxSpeed = 80;
                 this._acceleration = 3;
             }
         } else {
+            // Stopped animation when no movement keys are pressed
             this._currentAnimationAction = this._animationMap["stopped"];
             this._speed = 0;
             this._maxSpeed = 0;
             this._acceleration = 0;
         }
 
+        // Transition between previous and current animations
         if (previousAnimationAction !== this._currentAnimationAction) {
             previousAnimationAction.fadeOut(0.5);
             this._currentAnimationAction.reset().fadeIn(0.5).play();
         }
     }
 
-    //==== For world components interactive =====
-    // 이전 캐릭터 위치 - 카메라 위치 = 오차벡터
-    // 현재 캐릭터 위치 + 오차 벡터 = 새로운 카메라 위치
+
+    // Method to update camera position based on the character's movement
     fixCameraToModel(camera) {
-        var offset = new THREE.Vector3();
+        // Calculate offset vector between previous camera position and current character position
+        const offset = new THREE.Vector3();
         offset.subVectors(camera.position, this._previousPosition);
-        var newPosition = new THREE.Vector3();
+
+        // Calculate new camera position based on current character position and offset vector
+        const newPosition = new THREE.Vector3();
         newPosition.addVectors(this._model.position, offset);
 
+        // Update camera position
         camera.position.x = newPosition.x;
         camera.position.z = newPosition.z;
         camera.position.y = newPosition.y;
@@ -179,6 +197,7 @@ class Character {
         return camera;
     }
 
+    // Method to update controls target based on the character's position
     fixControlToModel(controls) {
         controls.target.set(
             this._model.position.x,
@@ -189,18 +208,23 @@ class Character {
         return controls;
     }
 
+    // Method to check collision with the octree (world components)
     collisionWithOctree(octree) {
         const result = octree.capsuleIntersect(this._model._capsule);
-        if (result) { // 충돌한 경우
+
+        if (result) { // Collision occurred
+            // Translate the capsule to resolve the collision
             this._model._capsule.translate(result.normal.multiplyScalar(result.depth));
             this._bOnTheGround = true;
-        } else { // 충돌하지 않은 경우
+        } else { // No collision
             this._bOnTheGround = false;
         }
     }
 
+    // Method to check collision with coffee objects
     collisionWithCoffee(coffeeList) {
         var collisionIndex = -1;
+
         for (let i = 0; i < coffeeList.length; i++) {
             if (this._model._capsule.intersectsBox(coffeeList[i]._collisionBox)) {
                 console.log("Collision with coffee");
@@ -211,8 +235,10 @@ class Character {
         return collisionIndex;
     }
 
+    // Method to check collision with goal objects
     collisionWithGoal(goalList) {
         var isCollision = -1;
+
         for (let i = 0; i < goalList.length; i++) {
             if (this._model._capsule.intersectsBox(goalList[i]._collisionBox)) {
                 console.log("Collision with goal!");
@@ -223,14 +249,16 @@ class Character {
         return isCollision;
     }
 
+    // Method to set the position of the character
     setPosition(x, y, z) {
         this._model._capsule = new Capsule(
             new THREE.Vector3(x, y + this._diameter / 2, z),
-            new THREE.Vector3(x, y + this._height - this._diameter / 2, z),
+            new THREE.Vector3(x, y + this._boxHeight - this._diameter / 2, z),
             this._diameter / 2
         );
     }
 
+    // Method to convert character information to a JSON object
     toJson() {
         var jsonObject = {
             "x": this._model.position.x,
@@ -243,72 +271,70 @@ class Character {
     }
 
 
+
     // Update
+    // Method to update the character's state
     update(deltaTime, camera) {
         if (this._boxHelper) {
             this._boxHelper.update();
         }
-        // 
-        // =========== 여기에 특정 시간마다 hp를 깎는 코드를 넣으면 됩니다.
 
-        const pressedKeys = this._pressedKeys;
-        if (pressedKeys['m']) {
-            console.log(this._model.position)
-        }
-        //=====================================
-
+        // Check if the character is running
         if (running) {
             this._elapsedTime += deltaTime;
             if (this._elapsedTime > 0.5) {
-                if (this.hp <= 0)
+                if (this.hp <= 0) {
                     this.hp = 0;
-                else {
+                } else {
                     this.hp -= 1;
                     this._elapsedTime = 0;
-
                 }
                 console.log(this.hp);
             }
-
         }
 
-
+        // Update the character's animation mixer
         if (this._mixer) {
             this._mixer.update(deltaTime);
 
+            // Calculate the rotation quaternion based on the camera direction
             const angleCameraDirectionAxisY = Math.atan2(
                 (camera.position.x - this._model.position.x),
                 (camera.position.z - this._model.position.z)
             );
 
-            const rotateQuarternion = new THREE.Quaternion();
-            rotateQuarternion.setFromAxisAngle(
+            const rotateQuaternion = new THREE.Quaternion();
+            rotateQuaternion.setFromAxisAngle(
                 new THREE.Vector3(0, 1, 0),
                 angleCameraDirectionAxisY + this._directionOffset()
             );
 
-            this._model.quaternion.rotateTowards(rotateQuarternion, THREE.MathUtils.degToRad(5));
+            // Rotate the character towards the camera direction
+            this._model.quaternion.rotateTowards(rotateQuaternion, THREE.MathUtils.degToRad(5));
 
-            //walkDirection.y = 0;
+            // Set the walking direction based on the camera direction and key input
             this._walkDirection = new THREE.Vector3();
             camera.getWorldDirection(this._walkDirection);
             this._walkDirection.y = this._bOnTheGround ? 0 : -1;
             this._walkDirection.normalize();
-
             this._walkDirection.applyAxisAngle(new THREE.Vector3(0, 1, 0), this._directionOffset());
 
-            if (this._speed < this._maxSpeed) this._speed += this._acceleration;
-            else this._speed -= this._acceleration * 2;
+            // Update the character's speed and falling motion
+            if (this._speed < this._maxSpeed) {
+                this._speed += this._acceleration;
+            } else {
+                this._speed -= this._acceleration * 2;
+            }
 
             if (!this._bOnTheGround) {
                 this._fallingAcceleration += 1;
-                // this._fallingSpeed += Math.pow(this._fallingAcceleration, 2);
                 this._fallingSpeed += this._fallingAcceleration;
             } else {
                 this._fallingAcceleration = 0;
                 this._fallingSpeed = 0;
             }
 
+            // Calculate velocity based on speed and direction
             var velocity = new THREE.Vector3(0, this._walkDirection.y * this._fallingSpeed, 0);
             if (running) {
                 velocity = new THREE.Vector3(
@@ -318,11 +344,11 @@ class Character {
                 );
             }
 
-
+            // Translate the character based on velocity
             const deltaPosition = velocity.clone().multiplyScalar(deltaTime);
-
             this._model._capsule.translate(deltaPosition);
 
+            // Update the character's position and orientation
             this._previousPosition = this._model.position.clone();
             const capsuleHeight = this._model._capsule.end.y - this._model._capsule.start.y
                 + this._model._capsule.radius * 2;
@@ -332,8 +358,8 @@ class Character {
                 this._model._capsule.start.z
             );
         }
-
     }
+
 
 
 }

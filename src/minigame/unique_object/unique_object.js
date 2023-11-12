@@ -1,10 +1,7 @@
 var rand_color
 var rand_color_1
 
-var renderer, scene, camera, composer, planet, mixer, clock;
-var stars = [];
-
-const score = 0;
+var renderer, scene, camera, clock;
 
 window.onload = function init() {
 
@@ -27,12 +24,6 @@ window.onload = function init() {
   camera.position.x = 0;
   camera.position.y = 100;
   scene.add(camera);
-
-  planet = new THREE.Object3D();
-  scene.add(planet);
-
-  planet.position.y = -300;
-  planet.position.z = -150;
 
   var ambientLight = new THREE.AmbientLight(0xf1eae4);
   scene.add(ambientLight);
@@ -64,13 +55,12 @@ window.onload = function init() {
 
   const geometry = new THREE.IcosahedronBufferGeometry();
 
-  // 9 cubes -> icosahedron[9]
   function makeInstance(geometry, color, x, y) {
     const material = new THREE.MeshPhongMaterial({ color });
 
     const icosahedron = new THREE.Mesh(geometry, material);
-    // // 크기 조절
-    const scaleValue = 0.3; // 크기 조절 값 (2배로 확대)
+
+    const scaleValue = 0.3; 
     icosahedron.scale.set(scaleValue, scaleValue, scaleValue);
     scene.add(icosahedron);
 
@@ -94,24 +84,24 @@ window.onload = function init() {
   // icosahedron (x,y)
   const x = [-1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0];
   const y = [0.9, 0.9, 0.9, 0.0, 0.0, 0.0, -0.9, -0.9, -0.9,];
-  const cubes = [];
+  const randObjects = [];
 
   for (var i = 0; i < 9; i++) {
     if (i == answer_cube) {
-      cubes.push(makeInstance(geometry, rand_color_1, x[i], y[i]));
+      randObjects.push(makeInstance(geometry, rand_color_1, x[i], y[i]));
     }
     else {
-      cubes.push(makeInstance(geometry, rand_color, x[i], y[i]));
+      randObjects.push(makeInstance(geometry, rand_color, x[i], y[i]));
     }
-    console.log(cubes.length);
+    console.log(randObjects.length);
 
   }
 
   // icosahedron rotation
   function render(time) {
-    time *= 0.001;  // convert time to seconds
+    time *= 0.001;  
 
-    cubes.forEach((icosahedron, ndx) => {
+    randObjects.forEach((icosahedron, ndx) => {
       const speed = 0.3 + ndx * .1;
       const rot = time * speed;
       icosahedron.rotation.x = rot;
@@ -195,24 +185,17 @@ window.onload = function init() {
 
     if (user_answer == answer_cube) {
       window.location.href = "../result/success.html";
-      //정답 시 점수 계산 로직
     }
     else {
       window.location.href = "../result/failure.html";
-      //오답시 점수 계산로직
     }
-    console.log('score', score);
 
     rayCast.setFromCamera(mouse, camera);
   }
 
 
-
   requestAnimationFrame(render);
   renderer.render(scene, camera);
-
-  // addSphere();
-  // animate();
 
   rayCast = new THREE.Raycaster();
 
@@ -222,19 +205,7 @@ window.onload = function init() {
 
   document.getElementById('canvas').appendChild(renderer.domElement);
 
-  // renderer.domElement.addEventListener("click",onMouseClick,false);
   document.getElementById('canvas').addEventListener("click", onMouseClick, false);
 
 
-}
-
-function createMaterial() {
-  var discoTexture = THREE.ImageUtils.loadTexture("rainbow1.jpg");
-  var discoMaterial = new THREE.MeshBasicMaterial({
-    // color: 0xBD9779,
-    // shading: THREE.FlatShading
-  });
-  discoMaterial.map = discoTexture;
-
-  return discoMaterial;
 }

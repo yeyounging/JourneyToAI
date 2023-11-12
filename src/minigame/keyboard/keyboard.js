@@ -1,106 +1,114 @@
-
-var renderer, scene, camera, composer, planet, mixer, clock;
+// Three.js rendering variables
+var renderer, scene, camera;
 var stars = [];
 
+// Arrays for the quiz generation and user input
 var quiz = [];
 var quizArrow = [];
 var answer = [];
-var keyArray = [37, 38, 39, 40];
-var arrow = ["⇦", "⇧", "⇨", "⇩"];
+var keyArray = [37, 38, 39, 40]; // Key codes for arrow keys (left, up, right, down)
+var arrow = ["⇦", "⇧", "⇨", "⇩"]; // Corresponding arrow symbols
 
-
-//quiz 랜덤 출제
+// Randomly generate a sequence of arrow keys for the quiz
 for (var i = 0; i < 6; i++) {
-  j = Math.floor(Math.random() * 4);
-  console.log(j);
+  var j = Math.floor(Math.random() * 4);
   quiz.push(keyArray[j]);
   quizArrow.push(arrow[j]);
-  console.log(quiz);
 }
 
-//방향키 누르면 값 받아서 answer array에 저장
-//6번 누르게 될경우 정답과 비교하는 함수 호출
+// Event listener for keydown to capture user input
 $(document).keydown(function (e) {
-  if (e.which == 37) {
-    $('.left').addClass('pressed');
-    $('.lefttext').text('LEFT');
-    $('.left').css('transform', 'translate(0, 2px)');
-    if (answer.length == 5) {
-      answer.push(37);
-      quizResult();
-    } else {
-      answer.push(37);
-      console.log(answer);
-    }
-  } else if (e.which == 38) {
-    $('.up').addClass('pressed');
-    $('.uptext').text('UP');
-    $('.left').css('transform', 'translate(0, 2px)');
-    $('.down').css('transform', 'translate(0, 2px)');
-    $('.right').css('transform', 'translate(0, 2px)');
-    if (answer.length == 5) {
-      answer.push(38);
-      quizResult();
-    } else {
-      answer.push(38);
-      console.log(answer);
-    }
-  } else if (e.which == 39) {
-    $('.right').addClass('pressed');
-    $('.righttext').text('RIGHT');
-    $('.right').css('transform', 'translate(0, 2px)');
-    if (answer.length == 5) {
-      answer.push(39);
-      quizResult();
-    } else {
-      answer.push(39);
-      console.log(answer);
-    }
-  } else if (e.which == 40) {
-    $('.down').addClass('pressed');
-    $('.downtext').text('DOWN');
-    $('.down').css('transform', 'translate(0, 2px)');
-    if (answer.length == 5) {
-      answer.push(40);
-      quizResult();
-    } else {
-      answer.push(40);
-      console.log(answer);
-    }
+  if (keyArray.includes(e.which)) { // Check if the pressed key is an arrow key
+    handleKeyDown(e.which);
   }
 });
 
+// Event listener for keyup to reset the pressed state
 $(document).keyup(function (e) {
-  if (e.which == 37) {
-    $('.left').removeClass('pressed');
-    $('.lefttext').text('');
-    $('.left').css('transform', 'translate(0, 0)');
-  } else if (e.which == 38) {
-    $('.up').removeClass('pressed');
-    $('.uptext').text('');
-    $('.left').css('transform', 'translate(0, 0)');
-    $('.down').css('transform', 'translate(0, 0)');
-    $('.right').css('transform', 'translate(0, 0)');
-  } else if (e.which == 39) {
-    $('.right').removeClass('pressed');
-    $('.righttext').text('');
-    $('.right').css('transform', 'translate(0, 0)');
-  } else if (e.which == 40) {
-    $('.down').removeClass('pressed');
-    $('.downtext').text('');
-    $('.down').css('transform', 'translate(0, 0)');
+  if (keyArray.includes(e.which)) { // Check if the released key is an arrow key
+    handleKeyUp(e.which);
   }
 });
 
+// Function to handle keydown events and track user input
+function handleKeyDown(key) {
+  var arrowClass, arrowText;
 
-//정답과 비교하는 함수
+  // Display pressed state and set translation for animation
+  switch (key) {
+    case 37:
+      arrowClass = '.left';
+      arrowText = 'LEFT';
+      translateArrow('.left');
+      break;
+    case 38:
+      arrowClass = '.up';
+      arrowText = 'UP';
+      translateArrow('.left, .down, .right');
+      break;
+    case 39:
+      arrowClass = '.right';
+      arrowText = 'RIGHT';
+      translateArrow('.right');
+      break;
+    case 40:
+      arrowClass = '.down';
+      arrowText = 'DOWN';
+      translateArrow('.down');
+      break;
+  }
+
+  // Store the user's input in the answer array
+  answer.push(key);
+
+  // Check if the user has entered all the required keys and call the quizResult function
+  if (answer.length == 6) {
+    quizResult();
+  } else {
+    console.log(answer);
+  }
+
+  // Function to animate the arrow by applying a translation
+  function translateArrow(selector) {
+    $(selector).addClass('pressed');
+    $(arrowClass + 'text').text(arrowText);
+    $(selector).css('transform', 'translate(0, 2px)');
+  }
+}
+
+// Function to handle keyup events and reset the pressed state
+function handleKeyUp(key) {
+  // Remove pressed state and reset text and translation
+  switch (key) {
+    case 37:
+      resetArrow('.left');
+      break;
+    case 38:
+      resetArrow('.left, .down, .right');
+      break;
+    case 39:
+      resetArrow('.right');
+      break;
+    case 40:
+      resetArrow('.down');
+      break;
+  }
+
+  // Function to reset the arrow to its initial state
+  function resetArrow(selector) {
+    $(selector).removeClass('pressed');
+    $(arrowClass + 'text').text('');
+    $(selector).css('transform', 'translate(0, 0)');
+  }
+}
+
+// Function to compare the user's input with the generated quiz
 function quizResult() {
   for (var i = 0; i < answer.length; i++) {
     if (answer[i] != quiz[i]) {
       window.location.href = '../../minigame/result/failure.html';
       break;
-    }
-    else {
+    } else {
       if (i == 5) {
         window.location.href = '../../minigame/result/success.html';
       }
@@ -108,13 +116,12 @@ function quizResult() {
   }
 }
 
+// Initialize the game on window load
 window.onload = function () {
   init();
-  addSphere();
-
-  animate();
 }
 
+// Function to initialize Three.js rendering
 function init() {
   renderer = new THREE.WebGLRenderer({
     antialias: true,
@@ -135,23 +142,6 @@ function init() {
   camera.position.y = 100;
   scene.add(camera);
 
-
-  planet = new THREE.Object3D();
-  scene.add(planet);
-
-  planet.position.y = -180;
-
-  var geom = new THREE.IcosahedronGeometry(15, 2);
-  // var mat = new THREE.MeshPhongMaterial({
-  //   color: 0xBD9779,
-  //   shading: THREE.FlatShading
-  // });
-  // var mat = createMaterial();
-  // var mesh = new THREE.Mesh(geom, mat);
-  // mesh.scale.x = mesh.scale.y = mesh.scale.z = 18;
-  // planet.add(mesh);
-
-
   var ambientLight = new THREE.AmbientLight(0xBD9779);
   scene.add(ambientLight);
 
@@ -159,101 +149,12 @@ function init() {
   directionalLight.position.set(1, 1, 1).normalize();
   scene.add(directionalLight);
 
-  clock = new THREE.Clock();
-
-
-  /*
-  const loader = new THREE.GLTFLoader();
-  loader.load('littlePrincess_2.glb', function(glb){
-    princess = glb.scene.children[0];
-    princess.scale.set(20, 20 ,20);
-    princess.position.x = 50;
-    princess.position.y = 90;
-    princess.position.z = 150;
-
-    mixer = new THREE.AnimationMixer(glb.scene);
-
-    var action = mixer.clipAction( glb.animations[ 0 ] );
-    action.play();
-    
-    scene.add(glb.scene);
-
-
-  }, undefined, function (error) {
-    console.error(error);
-  });
-  */
-
   window.addEventListener('resize', onWindowResize, false);
+}
 
-};
-
+// Function to handle window resize events
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-
-
-function animate() {
-  requestAnimationFrame(animate);
-
-  planet.rotation.z -= .001;
-  planet.rotation.y = 0;
-  planet.rotation.x = 0;
-  renderer.clear();
-
-  var delta = clock.getDelta();
-  if (mixer) mixer.update(delta);
-
-
-  animateStars();
-  renderer.render(scene, camera);
-};
-
-
-function addSphere() {
-
-  // The loop will move from z position of -1000 to z position 1000, adding a random particle at each position. 
-  for (var x = -400; x < 400; x += 10) {
-
-    // Make a sphere (exactly the same as before). 
-    var geometry = new THREE.SphereGeometry(0.5, 32, 32)
-    var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    var sphere = new THREE.Mesh(geometry, material)
-
-    // This time we give the sphere random x and y positions between -500 and 500
-    sphere.position.z = Math.random() * 1000 - 500;
-    sphere.position.y = Math.random() * 1000 - 500;
-
-    // Then set the z position to where it is in the loop (distance of camera)
-    sphere.position.x = x;
-
-    // scale it up a bit
-    sphere.scale.x = sphere.scale.y = 4;
-
-    //add the sphere to the scene
-    scene.add(sphere);
-
-    //finally push it to the stars array 
-    stars.push(sphere);
-  }
-}
-
-function animateStars() {
-
-  // loop through each star
-  for (var i = 0; i < stars.length; i++) {
-
-    star = stars[i];
-
-    // and move it forward dependent on the mouseY position. 
-    star.position.x -= i / 30;
-
-    // if the particle is too close move it to the back
-    if (star.position.x < -400) star.position.x += 800;
-
-  }
-
 }

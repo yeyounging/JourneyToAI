@@ -7,7 +7,7 @@ let totalmili = 0;
 let resultString;
 let lapTimes;
 
-
+//타이머 interval 1밀리세컨드로 설정 후 게임이 중지된 시점에서 작동
 function startTimer() {
     if (!running) {
         running = true;
@@ -15,6 +15,7 @@ function startTimer() {
     }
 }
 
+//밀리세컨드 단위 시간을 분:초:밀리초 포맷으로 정리
 function updateTimer() {
     mili++;
     totalmili++;
@@ -29,6 +30,7 @@ function updateTimer() {
     updateDisplay();
 }
 
+//게임중 타이머가 멈추거나 다시 작동할 경우 시간 설정
 function updateTimerInGame(){
     seconds = Math.floor(mili/100);
     mili = mili % 100;
@@ -38,12 +40,13 @@ function updateTimerInGame(){
     updateDisplay();
 }
 
+//타이머 중지 + 밀리초 0으로 설정
 function stopTimer() {
     running = false;
     clearInterval(timer);
 }
 
-//메인페이지 UI용
+//메인페이지 UI용 타이머 디스플레이
 function updateDisplay() {
     const timerDisplay = document.getElementById('timerDisplay');
     timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(mili).padStart(2, '0')}`;
@@ -63,6 +66,7 @@ function formatTime(totalmili) {
     return min + ' : ' + sec + ' : ' + totalmili;
 }
 
+//로컬 스토리지의 데이터 가져오기
 function getLocalStorage() {
     //로컬 스토리지에서 랩타임 배열 가져오고 없으면 새로 만들기
     var lapTimesString = localStorage.getItem('lapTimes');
@@ -74,6 +78,7 @@ function getLocalStorage() {
     lapTimes = lapTimesString ? JSON.parse(lapTimesString) : [];
 }
 
+//랩타임 포맷 맞춰 로컬 스토리지에 저장하기
 function laptimeFormatting() {
     var formattedLapTimes = lapTimes.map(function (lapTime) {
         return {
@@ -89,6 +94,7 @@ function laptimeFormatting() {
     localStorage.setItem('lapTimes', JSON.stringify(lapTimes));
 }
 
+//로컬 스토리지에 저장된 내용 기반으로 랭킹 디스플레이
 function displayRank() {
     var displayElement = document.getElementById('localStorageContent');
     getLocalStorage();
@@ -96,6 +102,7 @@ function displayRank() {
     displayElement.textContent = resultString || 'No Records';
 }
 
+//게임 시작시 이벤트
 export function gameStart() {
     var startB = document.getElementById('startButton');
     startB.addEventListener('click', startTimer());
@@ -103,7 +110,7 @@ export function gameStart() {
     displayRank();
 }
 
-
+//게임 종료시 이벤트
 export function endGame() {
     var userName = prompt('Input user name:');
     var newLapTime = totalmili;
@@ -128,8 +135,8 @@ export function endGame() {
     }
 }
 
+//게임 일시정지시 로컬 스토리지에 타이머 정보 저장
 export function storeTimer(){
-
     var tempLapTimeString = localStorage.getItem('tempTimer');
     if (!tempLapTimeString) {
         var initialLapTimes = 0.0;
@@ -139,6 +146,7 @@ export function storeTimer(){
     localStorage.setItem('tempTimer', JSON.stringify(totalmili));
 }
 
+//게임 재개시 로컬 스토리지에 저장된 타이머 정보 바탕으로 이어서 타이머 작동
 export function callTimer(){
     totalmili = localStorage.getItem('tempTimer');
     mili = totalmili;

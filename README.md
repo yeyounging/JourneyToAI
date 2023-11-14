@@ -38,7 +38,7 @@ We used Blender to make our own 3D models of landmarks, mascot(Moohan-E), and ge
 ### Three.js
 We used GLTFLoader for loading 3D models into webpage, and setting various lights/camera views.
 
-### 📄Directory/Source Codes
+## 📄Directory/Source Codes
 /assets - Assets for the game. (GLTF models, textures, images etc.)  
 /common - Directory that contain all libraries  
 /src - Directory that contain all source codes 

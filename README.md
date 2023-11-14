@@ -39,18 +39,18 @@ We used Blender to make our own 3D models of landmarks, mascot(Moohan-E), and ge
 We used GLTFLoader for loading 3D models into webpage, and setting various lights/camera views.
 
 ## 📄Directory/Source Codes
-/assets - Assets for the game. (GLTF models, textures, images etc.)  
-/common - Directory that contain all libraries  
-/src - Directory that contain all source codes 
-/src/minigame - Directory for Minigames  
+* /assets - Assets for the game. (GLTF models, textures, images etc.)  
+* /common - Directory that contain all libraries  
+* /src - Directory that contain all source codes 
+* /src/minigame - Directory for Minigames  
 
 
-mainGame.html - The actual part of the game. HTML files to play our game.  
-mainGame.js - Logic for game progression. Render the all models.  
-main_UI.js - UI for mainGame.  
-character.js - Character class to be used by the player  
-coffee.js - coffee class. It shows which mini game will be played.  
-goalPoint.js - GoalPoint class. The object for destination  
+* mainGame.html - The actual part of the game. HTML files to play our game.  
+* mainGame.js - Logic for game progression. Render the all models.  
+* main_UI.js - UI for mainGame.  
+* character.js - Character class to be used by the player  
+* coffee.js - coffee class. It shows which mini game will be played.  
+* goalPoint.js - GoalPoint class. The object for destination  
 
 
 ## 🎬 Demo Video

@@ -17,7 +17,9 @@ This game represents the long journey from Gachon University Main Gate to AI Eng
 
 In this game, you can select several ways to get to AI Engineering Building.
 
-![image](https://github.com/wooing1084/JourneyToAI/assets/61281883/3bad7c66-7993-4319-9848-ba2c0cc3fde4)
+### Blender
+
+https://github.com/wooing1084/JourneyToAI/assets/61281883/26c8ddcb-dc7f-407c-9ea0-dcf9bca9e9a9
 
 Use WASD keys to move your character.
 
@@ -30,8 +32,6 @@ You can get some coffee during the journey which can restore your speed.
 ## 📥 Implementation
 
 ### Blender
-
-https://github.com/wooing1084/JourneyToAI/assets/61281883/26c8ddcb-dc7f-407c-9ea0-dcf9bca9e9a9
 
 We used Blender to make our own 3D models of landmarks, mascot(Moohan-E), and geographical gestures of Gachon University.
 

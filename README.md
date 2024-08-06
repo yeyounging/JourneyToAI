@@ -17,8 +17,6 @@ This game represents the long journey from Gachon University Main Gate to AI Eng
 
 In this game, you can select several ways to get to AI Engineering Building.
 
-### Blender
-
 https://github.com/wooing1084/JourneyToAI/assets/61281883/26c8ddcb-dc7f-407c-9ea0-dcf9bca9e9a9
 
 Use WASD keys to move your character.
